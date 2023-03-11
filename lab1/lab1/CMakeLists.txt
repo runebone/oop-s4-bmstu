@@ -15,11 +15,16 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        everything.h everything.cpp
+        qt/main.cpp
+        qt/mainwindow.cpp
+        qt/mainwindow.h
+        qt/mainwindow.ui
+        errors.h errors.cpp
+        qt/draw.h qt/draw.cpp
+        points.h points.cpp
+        edges.h edges.cpp
+        figure.h figure.cpp
+        requests.h requests.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
