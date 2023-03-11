@@ -1,7 +1,14 @@
 #include "figure.h"
 
-figure_t &init_figure()
+figure_t &init_figure(void)
 {
+    static figure_t figure;
+
+    init_points(figure.points);
+    init_edges(figure.edges);
+    set_to_zero(figure.center);
+
+    return figure;
 }
 
 
