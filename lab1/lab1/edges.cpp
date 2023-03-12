@@ -15,7 +15,7 @@ void init_edges(edges_t &edges)
 
 static void free_edge_array(edge_array_t &edge_array)
 {
-    if (edge_array != NULL)
+    if (edge_array.array != NULL)
     {
         free(edge_array.array);
     }
