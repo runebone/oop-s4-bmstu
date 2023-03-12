@@ -30,4 +30,6 @@ err_t write_edges(const edges_t &edges, FILE *opened_file);
 
 err_t edges_exist(const edges_t &edges);
 
+err_t get_edge_by_index(edge_t &edge, int index, const edges_t &edges);
+
 #endif // EDGES_H

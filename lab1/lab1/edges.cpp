@@ -206,3 +206,34 @@ err_t edges_exist(const edges_t &edges)
 
     return error_code;
 }
+
+static err_t validate_edge_array_index(const edge_array_t &edge_array, int index)
+{
+    err_t error_code = OK;
+
+    if (index < 0 || index >= edge_array.size)
+    {
+        error_code = ERR_INVALID_INDEX;
+    }
+
+    return error_code;
+}
+
+static err_t get_edge_by_index_from_edge_array(edge_t &edge, int index, const edge_array_t &edge_array)
+{
+    err_t error_code = validate_point_array_index(edge_array, index);
+
+    if (error_code == OK)
+    {
+        edge = edge_array.array[index];
+    }
+
+    return error_code;
+}
+
+err_t get_edge_by_index(edge_t &edge, int index, const edges_t &edges)
+{
+    err_t error_code = get_edge_by_index_from_edge_array(edge, index, edges);
+
+    return error_code;
+}
