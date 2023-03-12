@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "requests.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,5 +27,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    void mw_setup_canvas(canvas_t &canvas);
+    void mw_setup_change(change_t &change, action_t action);
 };
+
 #endif // MAINWINDOW_H
