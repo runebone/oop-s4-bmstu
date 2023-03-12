@@ -35,6 +35,11 @@ static err_t read_figure(figure_t &figure, FILE *opened_file)
         error_code = find_geometric_center(figure.center, figure.points);
     }
 
+    if (error_code == OK)
+    {
+        error_code = move_points_to_center(figure.points, figure.center);
+    }
+
     return error_code;
 }
 
@@ -143,21 +148,21 @@ err_t draw_figure(const figure_t &figure, const canvas_t &canvas)
 
 err_t translate_figure(figure_t &figure, const change_t &change)
 {
-    err_t error_code = OK;
+    err_t error_code = translate_points(figure.points, change);
 
     return error_code;
 }
 
 err_t rotate_figure(figure_t &figure, const change_t &change)
 {
-    err_t error_code = OK;
+    err_t error_code = rotate_points(figure.points, figure.center, change);
 
     return error_code;
 }
 
 err_t scale_figure(figure_t &figure, const change_t &change)
 {
-    err_t error_code = OK;
+    err_t error_code = scale_points(figure.points, figure.center, change);
 
     return error_code;
 }
