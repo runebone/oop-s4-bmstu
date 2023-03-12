@@ -221,7 +221,7 @@ static err_t validate_edge_array_index(const edge_array_t &edge_array, int index
 
 static err_t get_edge_by_index_from_edge_array(edge_t &edge, int index, const edge_array_t &edge_array)
 {
-    err_t error_code = validate_point_array_index(edge_array, index);
+    err_t error_code = validate_edge_array_index(edge_array, index);
 
     if (error_code == OK)
     {
