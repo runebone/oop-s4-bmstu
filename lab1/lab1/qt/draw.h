@@ -5,9 +5,6 @@
 
 struct canvas {
     QGraphicsScene *scene;
-
-    double width;
-    double height;
 };
 using canvas_t = struct canvas;
 
