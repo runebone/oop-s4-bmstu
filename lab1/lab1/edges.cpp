@@ -2,6 +2,9 @@
 
 #include <cstdlib>
 
+#define EDGE_TYPE_IN_FILE 'e'
+#define FGETS_BUFFER_SIZE 256
+
 static void init_edge_array(edge_array_t &edge_array)
 {
     edge_array.size = 0;
@@ -24,4 +27,109 @@ static void free_edge_array(edge_array_t &edge_array)
 void free_edges(edges_t &edges)
 {
     free_edge_array(edges);
+}
+
+static err_t read_edge(edge_t &edge, FILE *opened_file)
+{
+    err_t error_code = OK;
+    char buffer[FGETS_BUFFER_SIZE];
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        if (fgets(buffer, sizeof(buffer), opened_file) == NULL)
+        {
+            error_code = ERR_FGETS;
+        }
+    }
+
+    if (error_code == OK)
+    {
+        char type = 0;
+        int point_index_1;
+        int point_index_2;
+
+        int assigned_count = sscanf(buffer, "%c %d %d", &type, &point_index_1, &point_index_2);
+
+        if (type != EDGE_TYPE_IN_FILE)
+        {
+            error_code = ERR_READ_EDGE_INVALID_TYPE;
+        }
+        else if (assigned_count != 3)
+        {
+            error_code = ERR_READ_EDGE_INVALID_DATA;
+        }
+        else
+        {
+            edge.point_index_1 = point_index_1;
+            edge.point_index_2 = point_index_2;
+        }
+    }
+
+    return error_code;
+}
+
+static int count_edges(FILE *opened_file)
+{
+    err_t error_code = OK;
+    int count = 0;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        long int offset = ftell(opened_file);
+
+        edge_t tmp_edge;
+
+        while (error_code == OK)
+        {
+            error_code = read_edge(tmp_edge, opened_file);
+            count++;
+        }
+        count--;
+
+        fseek(opened_file, offset, SEEK_SET);
+    }
+
+    return count;
+}
+
+static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        int n = count_edges(opened_file);
+
+        edge_array.size = n;
+        edge_array.array = (edge_t*)malloc(n * sizeof(edge_t));
+
+        for (int i = 0; i < n; i++)
+        {
+            read_edge(edge_array.array[i], opened_file);
+        }
+    }
+
+    return error_code;
+}
+
+err_t read_edges(edges_t &edges, FILE *opened_file)
+{
+    err_t error_code = read_edges_array(edges, opened_file);
+
+    return error_code;
 }

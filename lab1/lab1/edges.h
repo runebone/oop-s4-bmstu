@@ -2,6 +2,7 @@
 #define EDGES_H
 
 #include <cstdio>
+#include "errors.h"
 
 struct edge
 {
@@ -23,5 +24,7 @@ using edges_t = edge_array_t;
 
 void init_edges(edges_t &edges);
 void free_edges(edges_t &edges);
+
+err_t read_edges(edges_t &edges, FILE *opened_file);
 
 #endif // EDGES_H
