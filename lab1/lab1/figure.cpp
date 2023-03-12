@@ -61,9 +61,44 @@ err_t load_figure(figure_t &figure, const filename_t &filename)
     return error_code;
 }
 
+static err_t write_figure(const figure_t &figure, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        error_code = write_points(figure.points, opened_file);
+    }
+
+    if (error_code == OK)
+    {
+        error_code = write_edges(figure.edges, opened_file);
+    }
+
+    return error_code;
+}
+
 err_t save_figure(const figure_t &figure, const filename_t &filename)
 {
     err_t error_code = OK;
+
+    FILE *file = fopen(filename, "w");
+
+    if (file == NULL)
+    {
+        error_code = ERR_OPEN_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        error_code = write_figure(figure, file);
+        fclose(file);
+    }
 
     return error_code;
 }
