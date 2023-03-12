@@ -24,5 +24,6 @@ using points_t = point_array_t;
 
 void init_points(points_t &points);
 void set_to_zero(point_t &point);
+void free_points(points_t &points);
 
 #endif // POINT_H
