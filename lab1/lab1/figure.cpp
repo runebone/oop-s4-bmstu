@@ -41,4 +41,6 @@ err_t scale_figure(figure_t &figure, const change_t &change)
 
 void free_figure(figure_t &figure)
 {
+    free_points(figure.points);
+    free_edges(figure.edges);
 }
