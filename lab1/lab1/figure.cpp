@@ -105,7 +105,7 @@ err_t save_figure(const figure_t &figure, const filename_t &filename)
 
 static err_t figure_exists(const figure_t &figure)
 {
-    error_code = points_exist(figure.points);
+    err_t error_code = points_exist(figure.points);
 
     if (error_code == OK)
     {
@@ -122,6 +122,14 @@ err_t draw_figure(const figure_t &figure, const canvas_t &canvas)
 
     if (error_code == OK)
     {
+        error_code = canvas_exists(canvas);
+    }
+
+    if (error_code == OK)
+    {
+        clear_canvas(canvas);
+
+        error_code = draw_wireframe(canvas, figure.points, figure.edges);
     }
 
     return error_code;
