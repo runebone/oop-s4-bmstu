@@ -195,3 +195,22 @@ err_t write_points(const points_t &points, FILE *opened_file)
 
     return error_code;
 }
+
+err_t point_array_exist(const point_array_t &point_array)
+{
+    err_t error_code = OK;
+
+    if (point_array.array == NULL)
+    {
+        error_code = ERR_NULL_POINT_ARRAY;
+    }
+
+    return error_code;
+}
+
+err_t points_exist(const points_t &points)
+{
+    err_t error_code = point_array_exist(points);
+
+    return error_code;
+}
