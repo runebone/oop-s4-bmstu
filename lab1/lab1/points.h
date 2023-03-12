@@ -39,7 +39,7 @@ err_t find_geometric_center(point_t &center, const points_t &points);
 err_t move_points_to_center(points_t &points, const point_t &center);
 
 err_t translate_points(points_t &points, const point_t &translate);
-err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate);
+err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate_degrees);
 err_t scale_points(points_t &points, const point_t &anchor, const point_t &scale);
 
 #endif // POINT_H

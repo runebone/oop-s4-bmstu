@@ -1,6 +1,7 @@
 #include "points.h"
 
 #include <cstdlib> // -> free, malloc
+#include <cmath> // -> M_PI, trigonometric funcs
 
 #define POINT_TYPE_IN_FILE 'v'
 #define BUFFER_SIZE 256
@@ -331,24 +332,80 @@ err_t translate_points(points_t &points, const point_t &translate)
     return error_code;
 }
 
-static err_t rotate_point_array(point_array_t &point_array, const point_t &anchor, const point_t &rotate)
+static double to_radians(double degrees)
+{
+    double radians = M_PI * degrees / 180;
+
+    return radians;
+}
+
+static void rotate_x(point_t &point, double degrees)
+{
+    double theta = to_radians(degrees);
+    double y = point.y;
+    double z = point.z;
+
+    point.y = y * cos(theta) + z * sin(theta);
+    point.z = -y * sin(theta) + z * cos(theta);
+}
+
+static void rotate_y(point_t &point, double degrees)
+{
+    double theta = to_radians(degrees);
+    double x = point.x;
+    double z = point.z;
+
+    point.x = x * cos(theta) - z * sin(theta);
+    point.z = x * sin(theta) + z * cos(theta);
+}
+
+static void rotate_z(point_t &point, double degrees)
+{
+    double theta = to_radians(degrees);
+    double x = point.x;
+    double y = point.y;
+
+    point.x = x * cos(theta) + y * sin(theta);
+    point.y = -x * sin(theta) + y * cos(theta);
+}
+
+static void rotate_point(point_t &point, const point_t &rotate_degrees)
+{
+    rotate_x(point, rotate_degrees.x);
+    rotate_y(point, rotate_degrees.y);
+    rotate_z(point, rotate_degrees.z);
+}
+
+static err_t rotate_point_array(point_array_t &point_array, const point_t &anchor, const point_t &rotate_degrees)
 {
     err_t error_code = point_array_exist(point_array);
 
     if (error_code == OK)
     {
+        for (int i = 0; i < point_array.size; i++)
+        {
+            move_point_to_center(point_array.array[i], anchor);
+            rotate_point(point_array.array[i], rotate_degrees);
+            move_point_from_center(point_array.array[i], anchor);
+        }
     }
 
     return error_code;
 }
 
-err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate)
+err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate_degrees)
 {
-    err_t error_code = rotate_point_array(points, anchor, rotate);
+    err_t error_code = rotate_point_array(points, anchor, rotate_degrees);
 
     return error_code;
 }
 
+static void scale_point(point_t &point, const point_t &scale)
+{
+    point.x *= scale.x;
+    point.y *= scale.y;
+    point.z *= scale.z;
+}
 
 static err_t scale_point_array(point_array_t &point_array, const point_t &anchor, const point_t &scale)
 {
@@ -356,6 +413,12 @@ static err_t scale_point_array(point_array_t &point_array, const point_t &anchor
 
     if (error_code == OK)
     {
+        for (int i = 0; i < point_array.size; i++)
+        {
+            move_point_to_center(point_array.array[i], anchor);
+            scale_point(point_array.array[i], scale);
+            move_point_from_center(point_array.array[i], anchor);
+        }
     }
 
     return error_code;
