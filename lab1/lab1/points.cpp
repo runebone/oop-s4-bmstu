@@ -1,6 +1,9 @@
 #include "points.h"
 
-#include <cstdlib>
+#include <cstdlib> // -> NULL
+
+#define POINT_TYPE_IN_FILE 'v'
+#define FGETS_BUFFER_SIZE 256
 
 static void init_point_array(point_array_t &point_array)
 {
@@ -31,4 +34,111 @@ static void free_point_array(point_array_t &point_array)
 void free_points(points_t &points)
 {
     free_point_array(points);
+}
+
+static err_t read_point(point_t &point, FILE *opened_file)
+{
+    err_t error_code = OK;
+    char buffer[FGETS_BUFFER_SIZE];
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        if (fgets(buffer, sizeof(buffer), opened_file) == NULL)
+        {
+            error_code = ERR_FGETS;
+        }
+    }
+
+    if (error_code == OK)
+    {
+        char type = 0;
+        double x;
+        double y;
+        double z;
+
+        int assigned_count = sscanf(buffer, "%c %lf %lf %lf", &type, &x, &y, &z);
+
+        if (type != POINT_TYPE_IN_FILE)
+        {
+            error_code = ERR_READ_POINT_INVALID_TYPE;
+        }
+        else if (assigned_count != 4)
+        {
+            error_code = ERR_READ_POINT_INVALID_DATA;
+        }
+        else
+        {
+            point.x = x;
+            point.y = y;
+            point.z = z;
+        }
+    }
+
+    return error_code;
+}
+
+static int count_points(FILE *opened_file)
+{
+    err_t error_code = OK;
+    int count = 0;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        long int offset = ftell(opened_file);
+
+        point_t tmp_point;
+
+        while (error_code == OK)
+        {
+            error_code = read_point(tmp_point, opened_file);
+            count++;
+        }
+        count--;
+
+        fseek(opened_file, offset, SEEK_SET);
+    }
+
+    return count;
+}
+
+static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        int n = count_points(opened_file);
+
+        point_array.size = n;
+        point_array.array = (point_t*)malloc(n * sizeof(point_t));
+
+        for (int i = 0; i < n; i++)
+        {
+            read_point(point_array.array[i], opened_file);
+        }
+    }
+
+    return error_code;
+}
+
+err_t read_points(points_t &points, FILE *opened_file)
+{
+    err_t error_code = read_point_array(points, opened_file);
+
+    return error_code;
 }

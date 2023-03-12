@@ -1,7 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <cstdlib>
+#include <cstdio>
+#include "errors.h"
 
 struct point
 {
@@ -25,5 +26,7 @@ using points_t = point_array_t;
 void init_points(points_t &points);
 void set_to_zero(point_t &point);
 void free_points(points_t &points);
+
+err_t read_points(points_t &points, FILE *opened_file);
 
 #endif // POINT_H
