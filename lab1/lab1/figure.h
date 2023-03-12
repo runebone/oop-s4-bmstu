@@ -21,7 +21,7 @@ using filename_t = const char *;
 using change_t = point_t;
 
 
-figure_t &init_figure(void);
+figure_t &init_figure();
 
 err_t load_figure(figure_t &figure, const filename_t &filename);
 err_t save_figure(const figure_t &figure, const filename_t &filename);

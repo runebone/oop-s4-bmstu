@@ -1,6 +1,6 @@
 #include "figure.h"
 
-figure_t &init_figure(void)
+figure_t &init_figure()
 {
     static figure_t figure;
 
