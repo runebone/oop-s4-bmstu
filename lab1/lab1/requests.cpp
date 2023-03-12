@@ -30,6 +30,8 @@ err_t process_request(const request_t &request)
             free_figure(figure);
             break;
         default:
+            // Probably we either updated actions and forgot to handle new cases
+            // or request.action has not been initialized.
             error_code = ERR_UNKNOWN;
     }
 
