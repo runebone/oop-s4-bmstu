@@ -103,6 +103,18 @@ err_t save_figure(const figure_t &figure, const filename_t &filename)
     return error_code;
 }
 
+err_t figure_exists(const figure_t &figure)
+{
+    error_code = points_exist(figure.points);
+
+    if (error_code == OK)
+    {
+        error_code = edges_exist(figure.edges);
+    }
+
+    return error_code;
+}
+
 
 err_t draw_figure(const figure_t &figure, const canvas_t &canvas)
 {
