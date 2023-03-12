@@ -11,10 +11,52 @@ figure_t &init_figure()
     return figure;
 }
 
+static err_t read_figure(figure_t &figure, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        error_code = read_points(figure.points, opened_file);
+    }
+
+    if (error_code == OK)
+    {
+        error_code = read_edges(figure.edges, opened_file);
+    }
+
+    return error_code;
+}
 
 err_t load_figure(figure_t &figure, const filename_t &filename)
 {
     err_t error_code = OK;
+
+    figure_t tmp_figure;
+
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL)
+    {
+        error_code = ERR_OPEN_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        error_code = read_figure(tmp_figure, file);
+        fclose(file);
+    }
+
+    if (error_code == OK)
+    {
+        free_figure(figure);
+        figure = tmp_figure;
+    }
 
     return error_code;
 }

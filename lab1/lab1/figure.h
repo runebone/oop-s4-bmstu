@@ -3,8 +3,8 @@
 
 #include "qt/draw.h" // -> canvas_t
 #include "errors.h"
-#include "points.h"
-#include "edges.h"
+#include "points.h" // -> <cstdio>
+#include "edges.h" // -> <cstdio>
 
 struct figure
 {
