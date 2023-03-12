@@ -27,3 +27,25 @@ static double get_canvas_height(const canvas_t &canvas)
 
     return height;
 }
+
+err_t canvas_exists(const canvas_t &canvas)
+{
+    err_t error_code = OK;
+
+    if (canvas.scene == nullptr)
+    {
+        error_code = ERR_NULL_SCENE;
+    }
+
+    return error_code;
+}
+
+static void clear_scene(QGraphicsScene *scene)
+{
+    scene->clear();
+}
+
+void clear_canvas(const canvas_t &canvas)
+{
+    clear_scene(canvas.scene);
+}
