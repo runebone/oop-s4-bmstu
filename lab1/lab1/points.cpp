@@ -245,3 +245,38 @@ err_t get_point_by_index(point_t &point, int index, const points_t &points)
 
     return error_code;
 }
+
+static err_t find_geometric_center_from_point_array(point_t &center, const point_array_t &point_array)
+{
+    err_t error_code = point_array_exist(point_array);
+
+    if (error_code == OK)
+    {
+        point_t tmp;
+        point_t sum;
+
+        for (int i = 0; i < point_array.size; i++)
+        {
+            get_point_by_index_from_points_array(tmp, i, point_array);
+
+            sum.x += tmp.x;
+            sum.y += tmp.y;
+            sum.z += tmp.z;
+        }
+
+        sum.x /= point_array.size;
+        sum.y /= point_array.size;
+        sum.z /= point_array.size;
+
+        center = sum;
+    }
+
+    return error_code;
+}
+
+err_t find_geometric_center(point_t &center, const points_t &points)
+{
+    err_t error_code = find_geometric_center_from_point_array(center, points);
+
+    return error_code;
+}

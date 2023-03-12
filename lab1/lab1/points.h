@@ -34,4 +34,6 @@ err_t points_exist(const points_t &points);
 
 err_t get_point_by_index(point_t &point, int index, const points_t &points);
 
+err_t find_geometric_center(point_t &center, const points_t &points);
+
 #endif // POINT_H
