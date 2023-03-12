@@ -280,3 +280,87 @@ err_t find_geometric_center(point_t &center, const points_t &points)
 
     return error_code;
 }
+
+static void move_point_to_center(point_t &point, const point_t &center)
+{
+    point.x += center.x;
+    point.y += center.y;
+    point.z += center.z;
+}
+
+static err_t move_point_array_to_center(point_array_t &point_array, const point_t &center)
+{
+    err_t error_code = point_array_exist(point_array);
+
+    if (error_code == OK)
+    {
+        for (int i = 0; i < point_array.size; i++)
+        {
+            move_point_to_center(point_array.array[i], center);
+        }
+    }
+
+    return error_code;
+}
+
+err_t move_points_to_center(points_t &points, const point_t &center)
+{
+    err_t error_code = move_point_array_to_center(points, center);
+
+    return error_code;
+}
+
+static err_t translate_point_array(point_array_t &point_array, const point_t &translate)
+{
+    err_t error_code = point_array_exist(point_array);
+
+    if (error_code == OK)
+    {
+    }
+
+    return error_code;
+}
+
+err_t translate_points(points_t &points, const point_t &translate)
+{
+    err_t error_code = translate_point_array(points, translate);
+
+    return error_code;
+}
+
+static err_t rotate_point_array(point_array_t &point_array, const point_t &anchor, const point_t &rotate)
+{
+    err_t error_code = point_array_exist(point_array);
+
+    if (error_code == OK)
+    {
+    }
+
+    return error_code;
+}
+
+err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate)
+{
+    err_t error_code = rotate_point_array(points, anchor, rotate);
+
+    return error_code;
+}
+
+
+static err_t scale_point_array(point_array_t &point_array, const point_t &anchor, const point_t &scale)
+{
+    err_t error_code = point_array_exist(point_array);
+
+    if (error_code == OK)
+    {
+    }
+
+    return error_code;
+}
+
+err_t scale_points(points_t &points, const point_t &anchor, const point_t &scale)
+{
+    err_t error_code = scale_point_array(points, anchor, scale);
+
+    return error_code;
+}
