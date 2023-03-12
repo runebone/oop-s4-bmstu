@@ -5,7 +5,7 @@
 
 struct canvas
 {
-    QGraphicsScene *scene;
+    QGraphicsScene *scene = nullptr;
 };
 using canvas_t = struct canvas;
 
