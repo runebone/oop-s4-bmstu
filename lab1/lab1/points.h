@@ -15,8 +15,8 @@ using point_t = struct point;
 
 struct point_array
 {
-    int size;
-    point_t *array;
+    int size = 0;
+    point_t *array = NULL;
 };
 using point_array_t = struct point_array;
 
@@ -28,5 +28,6 @@ void set_to_zero(point_t &point);
 void free_points(points_t &points);
 
 err_t read_points(points_t &points, FILE *opened_file);
+err_t write_points(const points_t &points, FILE *opened_file);
 
 #endif // POINT_H

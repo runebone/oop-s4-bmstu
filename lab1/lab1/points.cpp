@@ -1,9 +1,9 @@
 #include "points.h"
 
-#include <cstdlib> // -> NULL
+#include <cstdlib> // -> free, malloc
 
 #define POINT_TYPE_IN_FILE 'v'
-#define FGETS_BUFFER_SIZE 256
+#define BUFFER_SIZE 256
 
 static void init_point_array(point_array_t &point_array)
 {
@@ -39,7 +39,7 @@ void free_points(points_t &points)
 static err_t read_point(point_t &point, FILE *opened_file)
 {
     err_t error_code = OK;
-    char buffer[FGETS_BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
 
     if (opened_file == NULL)
     {
@@ -139,6 +139,59 @@ static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
 err_t read_points(points_t &points, FILE *opened_file)
 {
     err_t error_code = read_point_array(points, opened_file);
+
+    return error_code;
+}
+
+static err_t write_point(const point_t &point, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        char buffer[BUFFER_SIZE];
+
+        sprintf(buffer, "%c %lf %lf %lf\n", POINT_TYPE_IN_FILE, point.x, point.y, point.z);
+
+        fprintf(opened_file, "%s", buffer);
+    }
+
+    return error_code;
+}
+
+static err_t write_point_array(const point_array_t &point_array, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        if (point_array.array == NULL)
+        {
+            error_code = ERR_NULL_POINT_ARRAY;
+        }
+    }
+
+    for (int i = 0; error_code == OK && i < point_array.size; i++)
+    {
+        error_code = write_point(point_array.array[i], opened_file);
+    }
+
+    return error_code;
+}
+
+err_t write_points(const points_t &points, FILE *opened_file)
+{
+    err_t error_code = write_point_array(points, opened_file);
 
     return error_code;
 }
