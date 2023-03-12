@@ -229,7 +229,7 @@ static err_t validate_point_array_index(const point_array_t &point_array, int in
 
 static err_t get_point_by_index_from_points_array(point_t &point, int index, const point_array_t &point_array)
 {
-    err_t error_code = validate_point_array_index(points, index);
+    err_t error_code = validate_point_array_index(point_array, index);
 
     if (error_code == OK)
     {
