@@ -288,6 +288,13 @@ static void move_point_to_center(point_t &point, const point_t &center)
     point.z += center.z;
 }
 
+static void move_point_from_center(point_t &point, const point_t &center)
+{
+    point.x -= center.x;
+    point.y -= center.y;
+    point.z -= center.z;
+}
+
 static err_t move_point_array_to_center(point_array_t &point_array, const point_t &center)
 {
     err_t error_code = point_array_exist(point_array);
@@ -312,11 +319,7 @@ err_t move_points_to_center(points_t &points, const point_t &center)
 
 static err_t translate_point_array(point_array_t &point_array, const point_t &translate)
 {
-    err_t error_code = point_array_exist(point_array);
-
-    if (error_code == OK)
-    {
-    }
+    err_t error_code = move_point_array_to_center(point_array, translate); // HACK
 
     return error_code;
 }
