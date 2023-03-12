@@ -30,6 +30,11 @@ static err_t read_figure(figure_t &figure, FILE *opened_file)
         error_code = read_edges(figure.edges, opened_file);
     }
 
+    if (error_code == OK)
+    {
+        error_code = find_geometric_center(figure.center, figure.points);
+    }
+
     return error_code;
 }
 
