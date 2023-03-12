@@ -15,8 +15,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QGraphicsScene *scene = new QGraphicsScene(this);
+    scene->setSceneRect(0, 0, SCENE_W, SCENE_H);
 
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
 
 MainWindow::~MainWindow()

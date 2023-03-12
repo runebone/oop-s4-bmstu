@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include "requests.h"
 
+#define SCENE_W 800
+#define SCENE_H 600
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
