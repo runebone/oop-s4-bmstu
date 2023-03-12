@@ -6,7 +6,8 @@ err_t process_request(const request_t &request)
 
     static figure_t figure = init_figure();
 
-    switch (request.action) {
+    switch (request.action)
+    {
         case LOAD:
             error_code = load_figure(figure, request.filename);
             break;

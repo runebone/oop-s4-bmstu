@@ -6,7 +6,8 @@
 #include "points.h"
 #include "figure.h" // -> filename_t, change_t
 
-enum actions {
+enum actions
+{
     LOAD,
     SAVE,
     DRAW,
@@ -18,7 +19,8 @@ enum actions {
 using action_t = enum actions;
 
 
-struct request {
+struct request
+{
     action_t action;
     filename_t filename;
     canvas_t canvas;

@@ -6,7 +6,8 @@
 #include "points.h"
 #include "edges.h"
 
-struct figure {
+struct figure
+{
     points_t points;
     edges_t edges;
     point_t center;

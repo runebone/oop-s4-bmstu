@@ -3,14 +3,16 @@
 
 #include <cstdio>
 
-struct edge {
+struct edge
+{
     int point_index_1;
     int point_index_2;
 };
 using edge_t = struct edge;
 
 
-struct edge_array {
+struct edge_array
+{
     int size = 0;
     edge_t *array = NULL;
 };

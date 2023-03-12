@@ -3,7 +3,8 @@
 
 #include <cstdlib>
 
-struct point {
+struct point
+{
     double x;
     double y;
     double z;
@@ -11,7 +12,8 @@ struct point {
 using point_t = struct point;
 
 
-struct point_array {
+struct point_array
+{
     int size = 0;
     point_t *array = NULL;
 };

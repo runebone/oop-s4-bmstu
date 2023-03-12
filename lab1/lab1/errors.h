@@ -1,7 +1,8 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
-enum errors {
+enum errors
+{
     OK,
     ERR_UNKNOWN,
 };

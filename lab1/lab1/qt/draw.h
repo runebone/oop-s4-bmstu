@@ -3,7 +3,8 @@
 
 #include <QGraphicsScene>
 
-struct canvas {
+struct canvas
+{
     QGraphicsScene *scene;
 };
 using canvas_t = struct canvas;
