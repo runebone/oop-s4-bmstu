@@ -187,3 +187,22 @@ err_t write_edges(const edges_t &edges, FILE *opened_file)
 
     return error_code;
 }
+
+err_t edge_array_exist(const edge_array_t &edge_array)
+{
+    err_t error_code = OK;
+
+    if (edge_array.array == NULL)
+    {
+        error_code = ERR_NULL_EDGE_ARRAY;
+    }
+
+    return error_code;
+}
+
+err_t edges_exist(const edges_t &edges)
+{
+    err_t error_code = edge_array_exist(edges);
+
+    return error_code;
+}
