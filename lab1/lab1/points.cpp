@@ -196,7 +196,7 @@ err_t write_points(const points_t &points, FILE *opened_file)
     return error_code;
 }
 
-err_t point_array_exist(const point_array_t &point_array)
+static err_t point_array_exist(const point_array_t &point_array)
 {
     err_t error_code = OK;
 

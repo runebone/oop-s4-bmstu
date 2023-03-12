@@ -188,7 +188,7 @@ err_t write_edges(const edges_t &edges, FILE *opened_file)
     return error_code;
 }
 
-err_t edge_array_exist(const edge_array_t &edge_array)
+static err_t edge_array_exist(const edge_array_t &edge_array)
 {
     err_t error_code = OK;
 
