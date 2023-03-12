@@ -4,8 +4,10 @@
 enum errors
 {
     OK,
+
     ERR_OPEN_FILE,
     ERR_NULL_FILE,
+
     ERR_FGETS,
 
     ERR_READ_POINT_INVALID_TYPE,
@@ -17,6 +19,8 @@ enum errors
     ERR_NULL_POINT_ARRAY,
     ERR_NULL_EDGE_ARRAY,
     ERR_NULL_SCENE,
+
+    ERR_INVALID_INDEX,
 
     ERR_INVALID_ACTION_IN_MW_SETUP_CHANGE,
 
