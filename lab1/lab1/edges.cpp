@@ -1,9 +1,9 @@
 #include "edges.h"
 
-#include <cstdlib>
+#include <cstdlib> // -> free, malloc
 
 #define EDGE_TYPE_IN_FILE 'e'
-#define FGETS_BUFFER_SIZE 256
+#define BUFFER_SIZE 256
 
 static void init_edge_array(edge_array_t &edge_array)
 {
@@ -32,7 +32,7 @@ void free_edges(edges_t &edges)
 static err_t read_edge(edge_t &edge, FILE *opened_file)
 {
     err_t error_code = OK;
-    char buffer[FGETS_BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
 
     if (opened_file == NULL)
     {
@@ -130,6 +130,60 @@ static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
 err_t read_edges(edges_t &edges, FILE *opened_file)
 {
     err_t error_code = read_edges_array(edges, opened_file);
+
+    return error_code;
+}
+
+
+static err_t write_edge(const edge_t &edge, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        char buffer[BUFFER_SIZE];
+
+        sprintf(buffer, "%c %d %d\n", EDGE_TYPE_IN_FILE, edge.point_index_1, edge.point_index_2);
+
+        fprintf(opened_file, "%s", buffer);
+    }
+
+    return error_code;
+}
+
+static err_t write_edge_array(const edge_array_t &edge_array, FILE *opened_file)
+{
+    err_t error_code = OK;
+
+    if (opened_file == NULL)
+    {
+        error_code = ERR_NULL_FILE;
+    }
+
+    if (error_code == OK)
+    {
+        if (edge_array.array == NULL)
+        {
+            error_code = ERR_NULL_EDGE_ARRAY;
+        }
+    }
+
+    for (int i = 0; error_code == OK && i < edge_array.size; i++)
+    {
+        error_code = write_edge(edge_array.array[i], opened_file);
+    }
+
+    return error_code;
+}
+
+err_t write_edges(const edges_t &edges, FILE *opened_file)
+{
+    err_t error_code = write_edge_array(edges, opened_file);
 
     return error_code;
 }
