@@ -14,8 +14,8 @@ using point_t = struct point;
 
 struct point_array
 {
-    int size = 0;
-    point_t *array = NULL;
+    int size;
+    point_t *array;
 };
 using point_array_t = struct point_array;
 

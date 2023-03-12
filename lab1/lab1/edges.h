@@ -13,8 +13,8 @@ using edge_t = struct edge;
 
 struct edge_array
 {
-    int size = 0;
-    edge_t *array = NULL;
+    int size;
+    edge_t *array;
 };
 using edge_array_t = struct edge_array;
 
