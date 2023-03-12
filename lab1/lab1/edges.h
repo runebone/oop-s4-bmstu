@@ -22,5 +22,6 @@ using edge_array_t = struct edge_array;
 using edges_t = edge_array_t;
 
 void init_edges(edges_t &edges);
+void free_edges(edges_t &edges);
 
 #endif // EDGES_H
