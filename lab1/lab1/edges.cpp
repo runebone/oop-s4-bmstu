@@ -73,7 +73,7 @@ static err_t read_edge(edge_t &edge, FILE *opened_file)
     return error_code;
 }
 
-static int count_edges(FILE *opened_file)
+static err_t count_edges(int &n, FILE *opened_file)
 {
     err_t error_code = OK;
     int count = 0;
@@ -99,12 +99,18 @@ static int count_edges(FILE *opened_file)
         fseek(opened_file, offset, SEEK_SET);
     }
 
-    return count;
+    if (error_code == OK)
+    {
+        n = count;
+    }
+
+    return error_code;
 }
 
 static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
 {
     err_t error_code = OK;
+    int n = 0;
 
     if (opened_file == NULL)
     {
@@ -113,8 +119,11 @@ static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
 
     if (error_code == OK)
     {
-        int n = count_edges(opened_file);
+        error_code = count_edges(n, opened_file);
+    }
 
+    if (error_code == OK)
+    {
         edge_array.size = n;
         edge_array.array = (edge_t*)malloc(n * sizeof(edge_t));
 

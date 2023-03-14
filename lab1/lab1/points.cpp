@@ -83,7 +83,7 @@ static err_t read_point(point_t &point, FILE *opened_file)
     return error_code;
 }
 
-static int count_points(FILE *opened_file)
+static err_t count_points(int &n, FILE *opened_file)
 {
     err_t error_code = OK;
     int count = 0;
@@ -109,12 +109,18 @@ static int count_points(FILE *opened_file)
         fseek(opened_file, offset, SEEK_SET);
     }
 
-    return count;
+    if (error_code == OK)
+    {
+        n = count;
+    }
+
+    return error_code;
 }
 
 static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
 {
     err_t error_code = OK;
+    int n = 0;
 
     if (opened_file == NULL)
     {
@@ -123,8 +129,11 @@ static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
 
     if (error_code == OK)
     {
-        int n = count_points(opened_file);
+        error_code = count_points(n, opened_file);
+    }
 
+    if (error_code == OK)
+    {
         point_array.size = n;
         point_array.array = (point_t*)malloc(n * sizeof(point_t));
 
