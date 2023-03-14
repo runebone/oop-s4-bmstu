@@ -270,13 +270,16 @@ static err_t find_geometric_center_from_point_array(point_t &center, const point
         point_t tmp;
         point_t sum;
 
-        for (int i = 0; i < point_array.size; i++)
+        for (int i = 0; error_code == OK && i < point_array.size; i++)
         {
-            get_point_by_index_from_points_array(tmp, i, point_array);
+            error_code = get_point_by_index_from_points_array(tmp, i, point_array);
 
-            sum.x += tmp.x;
-            sum.y += tmp.y;
-            sum.z += tmp.z;
+            if (error_code == OK)
+            {
+                sum.x += tmp.x;
+                sum.y += tmp.y;
+                sum.z += tmp.z;
+            }
         }
 
         sum.x /= point_array.size;
