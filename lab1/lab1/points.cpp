@@ -144,7 +144,7 @@ static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
 
         for (int i = 0; error_code == OK && i < n; i++)
         {
-            read_point(point_array.array[i], opened_file);
+            error_code = read_point(point_array.array[i], opened_file);
         }
     }
 
