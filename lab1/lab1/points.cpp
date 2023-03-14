@@ -128,7 +128,12 @@ static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
         point_array.size = n;
         point_array.array = (point_t*)malloc(n * sizeof(point_t));
 
-        for (int i = 0; i < n; i++)
+        if (point_array.array == NULL)
+        {
+            error_code = ERR_MALLOC;
+        }
+
+        for (int i = 0; error_code == OK && i < n; i++)
         {
             read_point(point_array.array[i], opened_file);
         }

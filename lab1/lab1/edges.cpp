@@ -118,7 +118,12 @@ static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
         edge_array.size = n;
         edge_array.array = (edge_t*)malloc(n * sizeof(edge_t));
 
-        for (int i = 0; i < n; i++)
+        if (edge_array.array == NULL)
+        {
+            error_code = ERR_MALLOC;
+        }
+
+        for (int i = 0; error_code == OK && i < n; i++)
         {
             read_edge(edge_array.array[i], opened_file);
         }
