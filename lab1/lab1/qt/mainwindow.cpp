@@ -237,7 +237,42 @@ static void qt_show_error(err_t error_code)
 
     switch (error_code)
     {
-        // TODO
+        case ERR_OPEN_FILE:
+            error_text = QString("File couldn't be opened.");
+            break;
+        case ERR_NULL_FILE:
+            error_text = QString("File pointer is NULL.");
+            break;
+        case ERR_FGETS:
+            error_text = QString("Error while reading file.");
+            break;
+        case ERR_MALLOC:
+            error_text = QString("Couldn't allocate memory.");
+            break;
+        case ERR_READ_POINT_INVALID_TYPE:
+            error_text = QString("Invalid file structure: bad point designation.");
+            break;
+        case ERR_READ_POINT_INVALID_DATA:
+            error_text = QString("Invalid file structure: bad point data.");
+            break;
+        case ERR_READ_EDGE_INVALID_TYPE:
+            error_text = QString("Invalid file structure: bad edge designation.");
+            break;
+        case ERR_READ_EDGE_INVALID_DATA:
+            error_text = QString("Invalid file structure: bad edge data.");
+            break;
+        case ERR_NULL_POINT_ARRAY:
+            error_text = QString("Point array is NULL.");
+            break;
+        case ERR_NULL_EDGE_ARRAY:
+            error_text = QString("Edge array is NULL.");
+            break;
+        case ERR_NULL_SCENE:
+            error_text = QString("Scene hasn't been initialized.");
+            break;
+        case ERR_INVALID_INDEX:
+            error_text = QString("Invalid index.");
+            break;
         case ERR_INVALID_ACTION_IN_MW_SETUP_CHANGE:
             error_text = QString("Invalid action in MainWindow setup_change function.");
             break;
