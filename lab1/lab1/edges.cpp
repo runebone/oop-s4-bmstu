@@ -32,42 +32,37 @@ void free_edges(edges_t &edges)
 static err_t read_edge(edge_t &edge, FILE *opened_file)
 {
     err_t error_code = OK;
-    char buffer[BUFFER_SIZE];
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
+    char buffer[BUFFER_SIZE];
+
+    if (fgets(buffer, sizeof(buffer), opened_file) == NULL)
     {
-        if (fgets(buffer, sizeof(buffer), opened_file) == NULL)
-        {
-            error_code = ERR_FGETS;
-        }
+        return ERR_FGETS;
     }
 
-    if (error_code == OK)
+    char type = 0;
+    int point_index_1;
+    int point_index_2;
+
+    int assigned_count = sscanf(buffer, "%c %d %d", &type, &point_index_1, &point_index_2);
+
+    if (type != EDGE_TYPE_IN_FILE)
     {
-        char type = 0;
-        int point_index_1;
-        int point_index_2;
-
-        int assigned_count = sscanf(buffer, "%c %d %d", &type, &point_index_1, &point_index_2);
-
-        if (type != EDGE_TYPE_IN_FILE)
-        {
-            error_code = ERR_READ_EDGE_INVALID_TYPE;
-        }
-        else if (assigned_count != 3)
-        {
-            error_code = ERR_READ_EDGE_INVALID_DATA;
-        }
-        else
-        {
-            edge.point_index_1 = point_index_1;
-            edge.point_index_2 = point_index_2;
-        }
+        return ERR_READ_EDGE_INVALID_TYPE;
+    }
+    else if (assigned_count != 3)
+    {
+        return ERR_READ_EDGE_INVALID_DATA;
+    }
+    else
+    {
+        edge.point_index_1 = point_index_1;
+        edge.point_index_2 = point_index_2;
     }
 
     return error_code;
@@ -76,28 +71,24 @@ static err_t read_edge(edge_t &edge, FILE *opened_file)
 static err_t count_edges(int &n, FILE *opened_file)
 {
     err_t error_code = OK;
-    int count = 0;
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
+    int count = 0;
+    long int offset = ftell(opened_file);
+    edge_t tmp_edge;
+
+    while (error_code == OK)
     {
-        long int offset = ftell(opened_file);
-
-        edge_t tmp_edge;
-
-        while (error_code == OK)
-        {
-            error_code = read_edge(tmp_edge, opened_file);
-            count++;
-        }
-        count--;
-
-        fseek(opened_file, offset, SEEK_SET);
+        error_code = read_edge(tmp_edge, opened_file);
+        count++;
     }
+    count--;
+
+    fseek(opened_file, offset, SEEK_SET);
 
     if (error_code == OK)
     {
@@ -114,13 +105,10 @@ static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
-    {
-        error_code = count_edges(n, opened_file);
-    }
+    error_code = count_edges(n, opened_file);
 
     if (error_code == OK)
     {
@@ -129,6 +117,8 @@ static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
 
         if (edge_array.array == NULL)
         {
+            // Should I also return from here?
+            // return ERR_MALLOC;
             error_code = ERR_MALLOC;
         }
 
@@ -155,17 +145,14 @@ static err_t write_edge(const edge_t &edge, FILE *opened_file)
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
-    {
-        char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
 
-        sprintf(buffer, "%c %d %d\n", EDGE_TYPE_IN_FILE, edge.point_index_1, edge.point_index_2);
+    sprintf(buffer, "%c %d %d\n", EDGE_TYPE_IN_FILE, edge.point_index_1, edge.point_index_2);
 
-        fprintf(opened_file, "%s", buffer);
-    }
+    fprintf(opened_file, "%s", buffer);
 
     return error_code;
 }
@@ -176,15 +163,12 @@ static err_t write_edge_array(const edge_array_t &edge_array, FILE *opened_file)
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
+    if (edge_array.array == NULL)
     {
-        if (edge_array.array == NULL)
-        {
-            error_code = ERR_NULL_EDGE_ARRAY;
-        }
+        return ERR_NULL_EDGE_ARRAY;
     }
 
     for (int i = 0; error_code == OK && i < edge_array.size; i++)
@@ -208,7 +192,7 @@ static err_t edge_array_exist(const edge_array_t &edge_array)
 
     if (edge_array.array == NULL)
     {
-        error_code = ERR_NULL_EDGE_ARRAY;
+        return ERR_NULL_EDGE_ARRAY;
     }
 
     return error_code;
@@ -227,7 +211,7 @@ static err_t validate_edge_array_index(const edge_array_t &edge_array, int index
 
     if (index < 0 || index >= edge_array.size)
     {
-        error_code = ERR_INVALID_INDEX;
+        return ERR_INVALID_INDEX;
     }
 
     return error_code;
