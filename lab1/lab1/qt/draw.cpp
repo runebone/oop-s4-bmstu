@@ -57,11 +57,23 @@ void clear_canvas(const canvas_t &canvas)
     clear_scene(canvas.scene);
 }
 
-static void qt_draw_line(QGraphicsScene *scene, const point_t &point_1, const point_t &point_2)
+static QPen get_default_pen()
 {
     QPen pen = QPen(Qt::black, 2);
 
+    return pen;
+}
+
+static void qt_draw_line_with_pen(QGraphicsScene *scene, const point_t &point_1, const point_t &point_2, const QPen &pen)
+{
     scene->addLine(point_1.x, point_1.y, point_2.x, point_2.y, pen);
+}
+
+static void qt_draw_line(QGraphicsScene *scene, const point_t &point_1, const point_t &point_2)
+{
+    QPen pen = get_default_pen();
+
+    qt_draw_line_with_pen(scene, point_1, point_2, pen);
 }
 
 static void center_point(point_t &point, const canvas_t &canvas)
