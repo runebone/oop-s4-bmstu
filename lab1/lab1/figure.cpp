@@ -17,13 +17,10 @@ static err_t read_figure(figure_t &figure, FILE *opened_file)
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
-    {
-        error_code = read_points(figure.points, opened_file);
-    }
+    error_code = read_points(figure.points, opened_file);
 
     if (error_code == OK)
     {
@@ -53,14 +50,11 @@ err_t load_figure(figure_t &figure, const filename_t &filename)
 
     if (file == NULL)
     {
-        error_code = ERR_OPEN_FILE;
+        return ERR_OPEN_FILE;
     }
 
-    if (error_code == OK)
-    {
-        error_code = read_figure(tmp_figure, file);
-        fclose(file);
-    }
+    error_code = read_figure(tmp_figure, file);
+    fclose(file);
 
     if (error_code == OK)
     {
@@ -77,13 +71,10 @@ static err_t write_figure(const figure_t &figure, FILE *opened_file)
 
     if (opened_file == NULL)
     {
-        error_code = ERR_NULL_FILE;
+        return ERR_NULL_FILE;
     }
 
-    if (error_code == OK)
-    {
-        error_code = write_points(figure.points, opened_file);
-    }
+    error_code = write_points(figure.points, opened_file);
 
     if (error_code == OK)
     {
@@ -101,14 +92,11 @@ err_t save_figure(const figure_t &figure, const filename_t &filename)
 
     if (file == NULL)
     {
-        error_code = ERR_OPEN_FILE;
+        return ERR_OPEN_FILE;
     }
 
-    if (error_code == OK)
-    {
-        error_code = write_figure(figure, file);
-        fclose(file);
-    }
+    error_code = write_figure(figure, file);
+    fclose(file);
 
     return error_code;
 }
