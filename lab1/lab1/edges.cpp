@@ -90,8 +90,10 @@ static err_t count_edges(int &n, FILE *opened_file)
 
     fseek(opened_file, offset, SEEK_SET);
 
-    if (error_code == OK)
+    if (count > 0)
     {
+        error_code = OK;
+
         n = count;
     }
 
