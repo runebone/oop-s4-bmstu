@@ -386,9 +386,9 @@ static err_t rotate_point_array(point_array_t &point_array, const point_t &ancho
     {
         for (int i = 0; i < point_array.size; i++)
         {
-            move_point_to_center(point_array.array[i], anchor);
-            rotate_point(point_array.array[i], rotate_degrees);
             move_point_from_center(point_array.array[i], anchor);
+            rotate_point(point_array.array[i], rotate_degrees);
+            move_point_to_center(point_array.array[i], anchor);
         }
     }
 
