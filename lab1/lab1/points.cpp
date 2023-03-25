@@ -40,8 +40,6 @@ void free_points(points_t &points)
 
 static err_t read_point(point_t &point, FILE *opened_file)
 {
-    err_t error_code = OK;
-
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
@@ -55,9 +53,7 @@ static err_t read_point(point_t &point, FILE *opened_file)
     }
 
     char type = 0;
-    double x;
-    double y;
-    double z;
+    double x, y, z;
 
     int assigned_count = sscanf(buffer, "%c %lf %lf %lf", &type, &x, &y, &z);
 
@@ -76,20 +72,19 @@ static err_t read_point(point_t &point, FILE *opened_file)
         point.z = z;
     }
 
-    return error_code;
+    return OK;
 }
 
 static err_t count_points(int &n, FILE *opened_file)
 {
-    err_t error_code = OK;
-    int count = 0;
-
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
     }
 
-    long int offset = ftell(opened_file);
+    // long int offset = ftell(opened_file);
+    err_t error_code = OK;
+    int count = 0;
     point_t tmp_point;
 
     while (error_code == OK)
@@ -99,12 +94,11 @@ static err_t count_points(int &n, FILE *opened_file)
     }
     count--;
 
-    fseek(opened_file, offset, SEEK_SET);
+    // fseek(opened_file, offset, SEEK_SET);
 
     if (count > 0)
     {
         error_code = OK;
-
         n = count;
     }
 
@@ -153,8 +147,6 @@ err_t read_points(points_t &points, FILE *opened_file)
 
 static err_t write_point(const point_t &point, FILE *opened_file)
 {
-    err_t error_code = OK;
-
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
@@ -163,16 +155,13 @@ static err_t write_point(const point_t &point, FILE *opened_file)
     char buffer[BUFFER_SIZE];
 
     sprintf(buffer, "%c %lf %lf %lf\n", POINT_TYPE_IN_FILE, point.x, point.y, point.z);
-
     fprintf(opened_file, "%s", buffer);
 
-    return error_code;
+    return OK;
 }
 
 static err_t write_point_array(const point_array_t &point_array, FILE *opened_file)
 {
-    err_t error_code = OK;
-
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
@@ -182,6 +171,8 @@ static err_t write_point_array(const point_array_t &point_array, FILE *opened_fi
     {
         return ERR_NULL_POINT_ARRAY;
     }
+
+    err_t error_code = OK;
 
     for (int i = 0; error_code == OK && i < point_array.size; i++)
     {
@@ -200,14 +191,12 @@ err_t write_points(const points_t &points, FILE *opened_file)
 
 static err_t point_array_exist(const point_array_t &point_array)
 {
-    err_t error_code = OK;
-
     if (point_array.array == NULL)
     {
         return ERR_NULL_POINT_ARRAY;
     }
 
-    return error_code;
+    return OK;
 }
 
 err_t points_exist(const points_t &points)
@@ -219,14 +208,12 @@ err_t points_exist(const points_t &points)
 
 static err_t validate_point_array_index(const point_array_t &point_array, int index)
 {
-    err_t error_code = OK;
-
     if (index < 0 || index >= point_array.size)
     {
         return ERR_INVALID_INDEX;
     }
 
-    return error_code;
+    return OK;
 }
 
 static err_t get_point_by_index_from_points_array(point_t &point, int index, const point_array_t &point_array)
