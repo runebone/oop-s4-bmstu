@@ -95,15 +95,17 @@ static void draw_line(const canvas_t &canvas, const point_t &point_1, const poin
     qt_draw_line(canvas.scene, centered_point_1, centered_point_2);
 }
 
-err_t draw_wireframe(const canvas_t &canvas, const points_t &points, const edges_t &edges)
+static err_t draw_projection(const canvas_t &canvas, const points_t &points, const edges_t &edges)
 {
     err_t error_code = OK;
 
+    int n = get_edges_size(edges);
     point_t point_1;
     point_t point_2;
     edge_t edge;
 
-    for (int i = 0; error_code == OK && i < edges.size; i++)
+    // V1; initial version
+    for (int i = 0; error_code == OK && i < n; i++)
     {
         error_code = get_edge_by_index(edge, i, edges);
 
@@ -122,6 +124,53 @@ err_t draw_wireframe(const canvas_t &canvas, const points_t &points, const edges
             draw_line(canvas, point_1, point_2);
         }
     }
+
+    // V2; nest if statements; avoid potential extra checks
+    for (int i = 0; error_code == OK && i < n; i++)
+    {
+        error_code = get_edge_by_index(edge, i, edges);
+
+        if (error_code == OK)
+        {
+            error_code = get_point_by_index(point_1, edge.point_index_1, points);
+
+            if (error_code == OK)
+            {
+                error_code = get_point_by_index(point_2, edge.point_index_2, points);
+
+                if (error_code == OK)
+                {
+                    draw_line(canvas, point_1, point_2);
+                }
+            }
+        }
+    }
+
+    // V3; avoid both nesting and potential extra checks; but use "break"-s
+    for (int i = 0; error_code == OK && i < n; i++)
+    {
+        error_code = get_edge_by_index(edge, i, edges);
+
+        if (error_code != OK) break;
+
+        error_code = get_point_by_index(point_1, edge.point_index_1, points);
+
+        if (error_code != OK) break;
+
+        error_code = get_point_by_index(point_2, edge.point_index_2, points);
+
+        if (error_code != OK) break;
+
+        draw_line(canvas, point_1, point_2);
+    }
+
+    return error_code;
+}
+
+
+err_t draw_wireframe(const canvas_t &canvas, const points_t &points, const edges_t &edges)
+{
+    err_t error_code = draw_projection(canvas, points, edges);
 
     return error_code;
 }
