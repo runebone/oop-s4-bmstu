@@ -5,6 +5,7 @@
 
 #define POINT_TYPE_IN_FILE 'v'
 #define BUFFER_SIZE 256
+#define DEG_TO_RAD (M_PI / 180)
 
 static void init_point_array(point_array_t &point_array)
 {
@@ -336,7 +337,7 @@ err_t translate_points(points_t &points, const point_t &translate)
 
 static double to_radians(double degrees)
 {
-    double radians = M_PI * degrees / 180;
+    double radians = degrees * DEG_TO_RAD;
 
     return radians;
 }
