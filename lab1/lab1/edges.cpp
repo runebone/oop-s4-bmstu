@@ -95,33 +95,65 @@ static err_t count_edges(int &n, FILE *opened_file)
     return error_code;
 }
 
-static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
+static err_t allocate_edge_array(edge_array_t &edge_array, int n)
 {
-    err_t error_code = OK;
-    int n = 0;
+    if (n <= 0)
+    {
+        return ERR_INVALID_ARRAY_SIZE;
+    }
 
+    edge_array.array = (edge_t*)malloc(n * sizeof(edge_t));
+
+    if (edge_array.array == NULL)
+    {
+        error_code = ERR_MALLOC;
+    }
+
+    edge_array.size = n;
+
+    return OK;
+}
+
+static err_t read_ith_edge(edge_array_t &edge_array, int i, FILE *opened_file)
+{
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
     }
 
-    error_code = count_edges(n, opened_file);
+    if (i < 0 || i >= edge_array.size)
+    {
+        return ERR_INVALID_INDEX;
+    }
+
+    edge_t tmp_edge;
+    err_t error_code = read_edge(tmp_edge, opened_file);
 
     if (error_code == OK)
     {
-        edge_array.size = n;
-        edge_array.array = (edge_t*)malloc(n * sizeof(edge_t));
+        edge_array.array[i] = tmp_edge;
+    }
 
-        if (edge_array.array == NULL)
-        {
-            // Should I also return from here?
-            // return ERR_MALLOC;
-            error_code = ERR_MALLOC;
-        }
+    return error_code;
+}
+
+static err_t read_edges_array(edge_array_t &edge_array, FILE *opened_file)
+{
+    if (opened_file == NULL)
+    {
+        return ERR_NULL_FILE;
+    }
+
+    int n = 0;
+    err_t error_code = count_edges(n, opened_file);
+
+    if (error_code == OK)
+    {
+        error_code = allocate_edge_array(edge_array, n);
 
         for (int i = 0; error_code == OK && i < n; i++)
         {
-            error_code = read_edge(edge_array.array[i], opened_file);
+            error_code = read_ith_edge(edge_array, i, opened_file);
         }
     }
 
