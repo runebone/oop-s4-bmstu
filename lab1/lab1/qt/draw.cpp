@@ -30,14 +30,12 @@ static double get_canvas_height(const canvas_t &canvas)
 
 static err_t scene_exists(const QGraphicsScene *scene)
 {
-    err_t error_code = OK;
-
     if (scene == nullptr)
     {
-        error_code = ERR_NULL_SCENE;
+        return ERR_NULL_SCENE;
     }
 
-    return error_code;
+    return OK;
 }
 
 err_t canvas_exists(const canvas_t &canvas)
