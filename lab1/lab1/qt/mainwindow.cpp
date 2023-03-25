@@ -273,6 +273,9 @@ static void qt_show_error(err_t error_code)
         case ERR_INVALID_INDEX:
             error_text = QString("Invalid index.");
             break;
+        case ERR_INVALID_ARRAY_SIZE:
+            error_text = QString("Invalid array size.");
+            break;
         case ERR_INVALID_ACTION_IN_MW_SETUP_CHANGE:
             error_text = QString("Invalid action in MainWindow setup_change function.");
             break;
