@@ -102,13 +102,12 @@ err_t draw_figure(const figure_t &figure, const canvas_t &canvas)
     if (error_code == OK)
     {
         error_code = canvas_exists(canvas);
-    }
 
-    if (error_code == OK)
-    {
-        clear_canvas(canvas);
-
-        error_code = draw_wireframe(canvas, figure.points, figure.edges);
+        if (error_code == OK)
+        {
+            clear_canvas(canvas);
+            error_code = draw_wireframe(canvas, figure.points, figure.edges);
+        }
     }
 
     return error_code;
