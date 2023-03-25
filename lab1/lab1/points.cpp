@@ -290,15 +290,17 @@ static err_t move_point_array_to_center(point_array_t &point_array, const point_
 {
     err_t error_code = point_array_exist(point_array);
 
-    if (error_code == OK)
+    if (error_code != OK)
     {
-        for (int i = 0; i < point_array.size; i++)
-        {
-            move_point_to_center(point_array.array[i], center);
-        }
+        return error_code;
     }
 
-    return error_code;
+    for (int i = 0; i < point_array.size; i++)
+    {
+        move_point_to_center(point_array.array[i], center);
+    }
+
+    return OK;
 }
 
 err_t move_points_to_center(points_t &points, const point_t &center)
@@ -370,17 +372,19 @@ static err_t rotate_point_array(point_array_t &point_array, const point_t &ancho
 {
     err_t error_code = point_array_exist(point_array);
 
-    if (error_code == OK)
+    if (error_code != OK)
     {
-        for (int i = 0; i < point_array.size; i++)
-        {
-            move_point_from_center(point_array.array[i], anchor);
-            rotate_point(point_array.array[i], rotate_degrees);
-            move_point_to_center(point_array.array[i], anchor);
-        }
+        return error_code;
     }
 
-    return error_code;
+    for (int i = 0; i < point_array.size; i++)
+    {
+        move_point_from_center(point_array.array[i], anchor);
+        rotate_point(point_array.array[i], rotate_degrees);
+        move_point_to_center(point_array.array[i], anchor);
+    }
+
+    return OK;
 }
 
 err_t rotate_points(points_t &points, const point_t &anchor, const point_t &rotate_degrees)
@@ -401,17 +405,19 @@ static err_t scale_point_array(point_array_t &point_array, const point_t &anchor
 {
     err_t error_code = point_array_exist(point_array);
 
-    if (error_code == OK)
+    if (error_code != OK)
     {
-        for (int i = 0; i < point_array.size; i++)
-        {
-            move_point_to_center(point_array.array[i], anchor);
-            scale_point(point_array.array[i], scale);
-            move_point_from_center(point_array.array[i], anchor);
-        }
+        return error_code;
     }
 
-    return error_code;
+    for (int i = 0; i < point_array.size; i++)
+    {
+        move_point_from_center(point_array.array[i], anchor);
+        scale_point(point_array.array[i], scale);
+        move_point_to_center(point_array.array[i], anchor);
+    }
+
+    return OK;
 }
 
 err_t scale_points(points_t &points, const point_t &anchor, const point_t &scale)
