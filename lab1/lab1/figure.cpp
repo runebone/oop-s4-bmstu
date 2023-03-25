@@ -13,28 +13,16 @@ figure_t &init_figure()
 
 static err_t read_figure(figure_t &figure, FILE *opened_file)
 {
-    err_t error_code = OK;
-
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
     }
 
-    error_code = read_points(figure.points, opened_file);
+    err_t error_code = read_points(figure.points, opened_file);
 
     if (error_code == OK)
     {
         error_code = read_edges(figure.edges, opened_file);
-    }
-
-    if (error_code == OK)
-    {
-        error_code = find_geometric_center(figure.center, figure.points);
-    }
-
-    if (error_code == OK)
-    {
-        error_code = move_points_to_center(figure.points, figure.center);
     }
 
     return error_code;
