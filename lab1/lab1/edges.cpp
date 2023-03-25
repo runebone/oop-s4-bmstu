@@ -257,3 +257,13 @@ err_t get_edge_by_index(edge_t &edge, int index, const edges_t &edges)
 
     return error_code;
 }
+
+static int get_edge_array_size(const edge_array_t &edge_array)
+{
+    return edge_array.size;
+}
+
+int get_edges_size(const edges_t &edges)
+{
+    return get_edge_array_size(edges);
+}

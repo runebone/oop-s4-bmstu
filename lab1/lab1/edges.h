@@ -32,4 +32,6 @@ err_t edges_exist(const edges_t &edges);
 
 err_t get_edge_by_index(edge_t &edge, int index, const edges_t &edges);
 
+int get_edges_size(const edges_t &edges);
+
 #endif // EDGES_H
