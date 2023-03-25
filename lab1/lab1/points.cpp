@@ -105,33 +105,65 @@ static err_t count_points(int &n, FILE *opened_file)
     return error_code;
 }
 
-static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
+static err_t allocate_point_array(point_array_t &point_array, int n)
 {
-    err_t error_code = OK;
-    int n = 0;
+    if (n <= 0)
+    {
+        return ERR_INVALID_ARRAY_SIZE;
+    }
 
+    point_array.array = (point_t*)malloc(n * sizeof(point_t));
+
+    if (point_array.array == NULL)
+    {
+        return ERR_MALLOC;
+    }
+
+    point_array.size = n;
+
+    return OK;
+}
+
+static err_t read_ith_point(point_array_t &point_array, int i, FILE *opened_file)
+{
     if (opened_file == NULL)
     {
         return ERR_NULL_FILE;
     }
 
-    error_code = count_points(n, opened_file);
+    if (i < 0 || i >= point_array.size)
+    {
+        return ERR_INVALID_INDEX;
+    }
+
+    point_t tmp_point;
+    err_t error_code = read_point(tmp_point, opened_file);
 
     if (error_code == OK)
     {
-        point_array.size = n;
-        point_array.array = (point_t*)malloc(n * sizeof(point_t));
+        point_array.array[i] = tmp_point;
+    }
 
-        if (point_array.array == NULL)
-        {
-            // Should I also return from here?
-            // return ERR_MALLOC;
-            error_code = ERR_MALLOC;
-        }
+    return error_code;
+}
+
+static err_t read_point_array(point_array_t &point_array, FILE *opened_file)
+{
+    if (opened_file == NULL)
+    {
+        return ERR_NULL_FILE;
+    }
+
+    int n = 0;
+    err_t error_code = count_points(n, opened_file);
+
+    if (error_code == OK)
+    {
+        error_code = allocate_point_array(point_array, n);
 
         for (int i = 0; error_code == OK && i < n; i++)
         {
-            error_code = read_point(point_array.array[i], opened_file);
+            error_code = read_ith_point(point_array, i, opened_file);
         }
     }
 
