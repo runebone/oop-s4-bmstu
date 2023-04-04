@@ -42,15 +42,19 @@ int main()
     std::vector vv{ { v } };
     std::vector vvv{ { vv } };
 
-    f(ppv);
-    std::cout << std::endl;
+    /* f(ppv); */
+    /* std::cout << std::endl; */
 
     f(v);
     std::cout << std::endl;
 
-    f(vvv);
+    /* f(vvv); */
 }
 
 /* Outputs: */
+/* Без закомментированных строк в main-е: */
 /* /tmp/ccxpRrl9.s: Assembler messages: */
 /* /tmp/ccxpRrl9.s:4403: Error: symbol `_Z1fISt6vectorIiSaIiEEEvT_' is already defined */
+/* С закомментированными строками в main-e: */
+/* vec */
+/* def */
