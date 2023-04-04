@@ -41,6 +41,7 @@ auto inc(Incrementable auto& arg)
 }
 
 #elif defined(PRIM_5)
+// Что-то типа анонимного концепта
 template <typename T>
 requires requires(T t)
 {
@@ -62,6 +63,9 @@ int main()
     cout << "i = " << inc(i) << endl;
     A obj{};
     /* cout << "obj = " << inc(obj) << endl; */
+
+    // У A не перегружен оператор ++, следовательно требования концепта не
+    // удовлетворяются, и программа не компилируется.
 }
 
 /* Outputs: */
