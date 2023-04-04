@@ -21,6 +21,7 @@ public:
 class BadWidget : public Base
 {
 private:
+    /* https://en.cppreference.com/w/cpp/memory/shared_ptr */
     shared_ptr<BadWidget> otherWidget;
 
 public:
@@ -40,6 +41,7 @@ public:
 class GoodWidget : public Base
 {
 private:
+    /* https://en.cppreference.com/w/cpp/memory/weak_ptr */
     weak_ptr<GoodWidget> otherWidget;
 
 public:
