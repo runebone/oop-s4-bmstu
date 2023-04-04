@@ -19,6 +19,7 @@ public:
 };
 
 #elif defined(V_2)
+// https://en.cppreference.com/w/cpp/language/lambda
 using Deleter = decltype([](FILE* stream)
 {
     fclose(stream);
