@@ -53,8 +53,10 @@ int main()
     A objA{};
     B objB{};
     cout << boolalpha << my_equal(objA, objB) << endl;
+    cout << boolalpha << my_equal(objB, objA) << endl;
 }
 
 /* Outputs: */
+/* true */
 /* true */
 /* true */
