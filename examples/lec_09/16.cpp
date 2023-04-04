@@ -1,3 +1,4 @@
+// Пример 09.16. Реализация хранителя unique_ptr.
 #include <iostream>
 
 using namespace std;
@@ -133,3 +134,12 @@ int main()
 
     obj1.swap(obj2);
 }
+
+/* Outputs: */
+/* Calling the constructor of class A (obj1); */
+/* Calling the constructor of class A (obj2); */
+/* Method f; */
+/* Method f; */
+/* Calling a class A destructor (obj2); */
+/* Method f; */
+/* Calling a class A destructor (obj1); */

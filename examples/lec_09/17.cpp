@@ -1,3 +1,4 @@
+// Пример 09.17. Реализация shared_ptr и weak_ptr.
 #include <iostream>
 
 using namespace std;
@@ -359,3 +360,14 @@ int main()
 
     return 0;
 }
+
+/* Outputs: */
+/* Calling the constructor of class A (obj1); */
+/* Method f; */
+/* Method f; */
+/* 2 */
+/* 4 */
+/* Calling the constructor of class A (obj2); */
+/* Method f; */
+/* Calling a class A destructor (obj2); */
+/* Calling a class A destructor (obj1); */

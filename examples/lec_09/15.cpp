@@ -1,3 +1,4 @@
+// Пример 09.15. Возврат shared_ptr на член данное объекта.
 #include <iostream>
 #include <memory>
 
@@ -65,3 +66,6 @@ int main()
     else
         cout << "value = " << *value << endl;
 }
+
+/* Outputs: */
+/* value = 10 */

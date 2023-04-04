@@ -1,3 +1,4 @@
+// Пример 09.06. Концепт с вариативным количеством параметров.
 #include <iostream>
 #include <concepts>
 
@@ -53,3 +54,6 @@ int main()
 {
     cout << sum(1., 2., 3., 4., 5.) << endl;
 }
+
+/* Outputs: */
+/* 15 */

@@ -1,3 +1,4 @@
+// Пример 09.05. Использование концепта с несколькими параметрами.
 #include <iostream>
 
 using namespace std;
@@ -53,3 +54,7 @@ int main()
     B objB{};
     cout << boolalpha << my_equal(objA, objB) << endl;
 }
+
+/* Outputs: */
+/* true */
+/* true */

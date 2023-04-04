@@ -1,3 +1,4 @@
+// Пример 09.13. Утечка памяти при использовании shared_ptr.
 #include <iostream>
 #include <string>
 #include <memory>
@@ -75,3 +76,17 @@ int main()
     }
     return 0;
 }
+
+/* Outputs: */
+/* Example 1 */
+/* BadWidget 1 First */
+/* BadWidget 1 Second */
+/* 1 First now points to 1 Second */
+/* 1 Second now points to 1 First */
+/* Example 2 */
+/* GoodWidget 2 First */
+/* GoodWidget 2 Second */
+/* 2 First now points to 2 Second */
+/* 2 Second now points to 2 First */
+/* ~GoodWidget 2 Second */
+/* ~GoodWidget 2 First */

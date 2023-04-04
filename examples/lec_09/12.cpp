@@ -1,3 +1,4 @@
+// Пример 09.12. Установка deleter для unique_ptr на примере закрытия файла.
 #include <iostream>
 #include <memory>
 #include <stdio.h>
@@ -49,3 +50,12 @@ int main()
         cout << ex.what() << endl;
     }
 }
+
+/* Outputs: */
+
+/* Если файл `test.txt` существует, выводит: */
+/* file is open */
+/* file is closed */
+
+/* иначе: */
+/* File not found! */

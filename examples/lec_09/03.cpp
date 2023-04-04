@@ -1,3 +1,4 @@
+// Пример 09.03. Варианты использования концепта.
 #include <iostream>
 
 using namespace std;
@@ -62,3 +63,6 @@ int main()
     A obj{};
     /* cout << "obj = " << inc(obj) << endl; */
 }
+
+/* Outputs: */
+/* i = 1 */

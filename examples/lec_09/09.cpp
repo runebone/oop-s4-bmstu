@@ -1,3 +1,4 @@
+// Пример 09.09. Ограничения для шаблонов классов, использование дизъюнкции.
 #include <iostream>
 
 using namespace std;
@@ -42,3 +43,7 @@ int main()
     int a = 0, b = 1;
     cout << boolalpha << d2(a, b) << endl;
 }
+
+/* Outputs: */
+/* true */
+/* false */

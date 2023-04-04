@@ -1,3 +1,4 @@
+// Пример 09.11. Применение unique_ptr.
 #include <iostream>
 #include <memory>
 
@@ -28,3 +29,10 @@ int main()
         obj2->f();
     }
 }
+
+/* Outputs: */
+/* Constructor */
+/* Constructor */
+/* Destructor */
+/* Function f */
+/* Destructor */

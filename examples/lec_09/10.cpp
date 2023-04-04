@@ -1,3 +1,4 @@
+// Пример 09.10. Шаблон Holder.
 #include <iostream>
 
 using namespace std;
@@ -46,3 +47,6 @@ int main()
 
     obj->f();
 }
+
+/* Outputs: */
+/* Function f of class A is called */

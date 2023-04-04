@@ -1,3 +1,4 @@
+// Пример 09.07. Концепты и инстанцирование. 
 #include <iostream>
 #include <vector>
 
@@ -49,3 +50,7 @@ int main()
 
     f(vvv);
 }
+
+/* Outputs: */
+/* /tmp/ccxpRrl9.s: Assembler messages: */
+/* /tmp/ccxpRrl9.s:4403: Error: symbol `_Z1fISt6vectorIiSaIiEEEvT_' is already defined */

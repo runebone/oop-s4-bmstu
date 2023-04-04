@@ -1,3 +1,4 @@
+// Пример 09.04. Концепты с составными ограничениями по типу выражений.
 #include <iostream>
 
 using namespace std;
@@ -60,3 +61,6 @@ int main()
     cout << boolalpha << ch_equal(3., 1) << endl;
     /* cout << ch_equal(" ", 1) << endl; */
 }
+
+/* Outputs: */
+/* false */

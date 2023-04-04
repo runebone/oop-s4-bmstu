@@ -1,3 +1,4 @@
+// Пример 09.08. Инстанцирование шаблонов методов класса.
 #include <iostream>
 
 using namespace std;
@@ -23,3 +24,6 @@ int main()
 {
     A obj(1.);
 }
+
+/* Outputs: */
+/* Creating float object */

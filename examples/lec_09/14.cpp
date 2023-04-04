@@ -1,3 +1,4 @@
+// Пример 09.14. Возврат shared_ptr на себя.
 #include <iostream>
 #include <memory>
 
@@ -30,3 +31,11 @@ int main()
         cout << e.what() << endl;
     }
 }
+
+/* Outputs: */
+/* Constructor */
+/* good1.use_count() = 2 */
+/* Constructor */
+/* Destructor */
+/* Destructor */
+/* bad_weak_ptr */
