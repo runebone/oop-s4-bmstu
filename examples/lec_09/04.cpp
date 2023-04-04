@@ -9,11 +9,16 @@ using namespace std;
 template <typename T, typename U, typename = void>
 struct is_equal_comparable : false_type {};
 
+// void_t<decltype(expr)> - проверяем expr на "правильность", отбрасывая
+// информацию о типе полученного выражения
 template <typename T, typename U>
 struct is_equal_comparable<T, U,
        void_t<decltype(declval<T>() == declval<U>())>> : true_type {};
 
 template <typename T, typename U>
+// requires is_equal_comparable<T, U>::value развернётся в requires true, если
+// возможно использование опреатора == между типами T и U, следовательно
+// ограничение is_equal_comparable будет удовлетворено
 requires is_equal_comparable<T, U>::value
 bool ch_equal(T&& lhs, U&& rhs)
 {
@@ -30,10 +35,11 @@ bool ch_equal(T&& lhs, U&& rhs)
 
 #elif defined(PRIM_3)
 template <typename T, typename U>
-concept WeaklyEquialityComparable = requires(T t, U u)
-{
-    { t == u } -> convertible_to<bool>;
-    { t != u } -> convertible_to<bool>;
+// Требуем от типов T и U, чтобы результат их сравнения посредством операторов
+// == и != был приводим к типу bool.
+concept WeaklyEquialityComparable = requires(T t, U u) {
+  { t == u } -> convertible_to<bool>;
+  { t != u } -> convertible_to<bool>;
 };
 
 template <typename T>
@@ -49,6 +55,8 @@ requires(const remove_reference_t<T>&t1, const remove_reference_t<T>&t2)
 
 template <typename T, typename U>
 requires WeaklyEquialityComparable<T, U>
+// Так как опреаторы == и != опреаторы для типов T и U определены, для них
+// автоматически определён и опреатор <=>.
 bool ch_equal(T&& lhs, U&& rhs)
 {
     return (lhs <=> rhs) == 0;
