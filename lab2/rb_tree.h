@@ -4,7 +4,9 @@
 #include <memory>
 #include <iterator>
 
-template<typename T>
+#include "concepts.h"
+
+template<HasDefaultConstructor T>
 class RedBlackTree
 {
 private:
@@ -32,10 +34,13 @@ private:
     private:
         bool m_is_red = false;
     };
+
+public:
     using NodePtr = std::shared_ptr<Node>;
     using WeakNodePtr = std::weak_ptr<Node>;
 #pragma endregion
 
+public:
 #pragma region Iterator
     class Iterator
     {
@@ -125,5 +130,7 @@ protected:
 private:
     NodePtr root;
 };
+
+/* #include "impl/rb_tree.hpp" */
 
 #endif // __RB_TREE_H__
