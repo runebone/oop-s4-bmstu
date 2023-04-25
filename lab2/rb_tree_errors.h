@@ -17,17 +17,16 @@ public:
         : BaseError("ContainerError", filename, classname, funcname, line, time, info) {}
 };
 
-// example error; will be removed
-class SomeError : public ContainerError
+class OrphanNodeError : public ContainerError
 {
 public:
-    explicit SomeError(
+    explicit OrphanNodeError(
         const std::string &filename,
         const std::string &classname,
         const std::string &funcname,
         const int line,
         const char *time,
-        const std::string &info = "Description"
+        const std::string &info = "Node without parent detected."
         )
         : ContainerError(filename, classname, funcname, line, time, info) {}
 };
