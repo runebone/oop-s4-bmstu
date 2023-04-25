@@ -17,6 +17,20 @@ public:
         : BaseError("ContainerError", filename, classname, funcname, line, time, info) {}
 };
 
+class NullNodeError : public ContainerError
+{
+public:
+    NullNodeError(
+        const std::string &filename,
+        const std::string &classname,
+        const std::string &funcname,
+        const int line,
+        const char *time,
+        const std::string &info = "Null pointer passed to function."
+        )
+        : ContainerError(filename, classname, funcname, line, time, info) {}
+};
+
 class OrphanNodeError : public ContainerError
 {
 public:

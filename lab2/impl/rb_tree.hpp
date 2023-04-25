@@ -30,6 +30,12 @@ template<typename T>
 // requires ValidNodeData<T>
 NodePtr<T> next(NodePtr<T> node)
 {
+    if (node == nullptr)
+    {
+        time_t timer = time(nullptr);
+        throw NullNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
+    }
+
     NodePtr<T> next_ptr = node->right;
 
     if (next_ptr == nullptr)
@@ -66,6 +72,12 @@ template<typename T>
 // requires ValidNodeData<T>
 NodePtr<T> prev(NodePtr<T> node)
 {
+    if (node == nullptr)
+    {
+        time_t timer = time(nullptr);
+        throw NullNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
+    }
+
     NodePtr<T> prev_ptr = node->left;
 
     if (prev_ptr == nullptr)
