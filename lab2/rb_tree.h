@@ -4,9 +4,10 @@
 #include <memory>
 #include <iterator>
 
-#include "concepts.h"
+/* #include "concepts.h" */
 
-template<HasDefaultConstructor T>
+/* template<ValidNodeData T> */
+template<typename T>
 class RedBlackTree
 {
 private:
