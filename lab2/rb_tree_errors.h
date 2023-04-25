@@ -59,6 +59,20 @@ public:
         const std::string &info)
         : BaseError("IteratorError", filename, classname, funcname, line, time, info) {}
 };
+
+class NullNodeIError : public IteratorError
+{
+public:
+    NullNodeIError(
+        const std::string &filename,
+        const std::string &classname,
+        const std::string &funcname,
+        const int line,
+        const char *time,
+        const std::string &info = "Null node pointer detected."
+        )
+        : IteratorError(filename, classname, funcname, line, time, info) {}
+};
 #pragma endregion
 
 #endif // __RB_TREE_ERRORS_H__

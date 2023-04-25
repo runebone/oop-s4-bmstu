@@ -143,7 +143,16 @@ template<typename T>
 // requires ValidNodeData<T>
 Iterator<T>& RedBlackTree<T>::Iterator::operator++()
 {
-    m_current = next(m_current);
+    try
+    {
+        m_current = next(m_current);
+    }
+    catch (const NullNodeError& e)
+    {
+        time_t timer = time(nullptr);
+        throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
+    }
+
     ++m_index;
 
     return *this;
@@ -163,7 +172,16 @@ template<typename T>
 // requires ValidNodeData<T>
 Iterator<T>& RedBlackTree<T>::Iterator::operator--()
 {
-    m_current = prev(m_current);
+    try
+    {
+        m_current = prev(m_current);
+    }
+    catch (const NullNodeError& e)
+    {
+        time_t timer = time(nullptr);
+        throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
+    }
+
     --m_index;
 
     return *this;
