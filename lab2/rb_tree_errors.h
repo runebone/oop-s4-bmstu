@@ -7,7 +7,7 @@
 class ContainerError : public BaseError
 {
 public:
-    explicit ContainerError(
+    ContainerError(
         const std::string &filename,
         const std::string &classname,
         const std::string &funcname,
@@ -20,7 +20,7 @@ public:
 class OrphanNodeError : public ContainerError
 {
 public:
-    explicit OrphanNodeError(
+    OrphanNodeError(
         const std::string &filename,
         const std::string &classname,
         const std::string &funcname,
@@ -36,7 +36,7 @@ public:
 class IteratorError : public BaseError
 {
 public:
-    explicit IteratorError(
+    IteratorError(
         const std::string &filename,
         const std::string &classname,
         const std::string &funcname,

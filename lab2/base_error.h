@@ -7,7 +7,7 @@
 class BaseError : public std::exception
 {
 public:
-    explicit BaseError(
+    BaseError(
         const std::string &errorname,
         const std::string &filename,
         const std::string &classname,
