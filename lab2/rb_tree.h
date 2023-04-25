@@ -51,7 +51,7 @@ public:
         using reference = T&;
         using difference_type = std::ptrdiff_t;
 
-        explicit Iterator(WeakNodePtr node) : current(node) {}
+        explicit Iterator(WeakNodePtr node) : m_current(node) {}
         explicit Iterator(const Iterator& other);
         Iterator(Iterator&& other) noexcept;
 
@@ -64,16 +64,17 @@ public:
         bool      operator!=(const Iterator& other) const;
         bool      operator==(const Iterator& other) const;
 
-        Iterator  operator+(difference_type n) const;
-        Iterator  operator-(difference_type n) const;
-        Iterator& operator+=(difference_type n);
-        Iterator& operator-=(difference_type n);
-        const T&  operator[](difference_type n) const;
+        Iterator  operator+(const difference_type& n) const;
+        Iterator  operator-(const difference_type& n) const;
+        Iterator& operator+=(const difference_type& n);
+        Iterator& operator-=(const difference_type& n);
+        const T&  operator[](const difference_type& n) const;
 
         explicit  operator bool() const;
 
     private:
-        WeakNodePtr current;
+        WeakNodePtr m_current;
+        size_t m_index;
     };
 #pragma endregion
 
@@ -86,6 +87,7 @@ public:
     RedBlackTree() = default;
     explicit RedBlackTree(const RedBlackTree& other);
     RedBlackTree(RedBlackTree&& other) noexcept;
+    RedBlackTree(std::initializer_list<T> l);
 
     virtual ~RedBlackTree();
 
@@ -107,7 +109,6 @@ public:
 
     Iterator begin() const;
     Iterator end() const;
-    Iterator find(const T& value) const;
 
     RedBlackTree& operator=(const RedBlackTree& other);
     RedBlackTree& operator=(RedBlackTree&& other);
@@ -115,20 +116,10 @@ public:
     bool operator==(const RedBlackTree& other) const;
 
 protected:
-    void rotate_right(NodePtr node);
-    void rotate_left(NodePtr node);
-    void fixup_insert(NodePtr node);
-    void fixup_remove(NodePtr node);
-
-    bool is_red(NodePtr node) const;
-    void change_color(NodePtr node);
-
     NodePtr search(const T& key) const;
 
-    bool validate() const;
-
 private:
-    NodePtr root;
+    NodePtr m_root;
 };
 
 /* #include "impl/rb_tree.hpp" */
