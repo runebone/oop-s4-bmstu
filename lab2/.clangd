@@ -1,0 +1,4 @@
+CompileFlags:
+    Add:
+    - -I/home/human/University/oop/lab2
+    - -std=c++20
