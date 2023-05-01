@@ -13,6 +13,6 @@ concept Comparable = requires(T a, T b)
 };
 
 template<typename T>
-concept ValidNodeData = Comparable<T> && std::is_default_constructible<T>;
+concept ValidNodeData = Comparable<T> && std::is_default_constructible<T>();
 
 #endif // __CONCEPTS_H__
