@@ -1,10 +1,10 @@
 #ifndef __RB_TREE_IMPL__
 #define __RB_TREE_IMPL__
 
-#include "../rb_tree.h"
-#include "rb_tree_errors.h"
+/* #include "../rb_tree.h" */
+/* #include "../rb_tree_errors.h" */
 
-#include "concepts.h"
+/* #include "../concepts.h" */
 
 template<ValidNodeData T>
 using Node = typename RedBlackTree<T>::Node;
@@ -15,11 +15,14 @@ using NodePtr = typename RedBlackTree<T>::NodePtr;
 template<ValidNodeData T>
 using WeakNodePtr = typename RedBlackTree<T>::WeakNodePtr;
 
+// Do I need them?
+// {
 template<ValidNodeData T>
 using Iterator = typename RedBlackTree<T>::Iterator;
 
 template<ValidNodeData T>
 using difference_type = typename RedBlackTree<T>::Iterator::difference_type;
+// }
 
 template<ValidNodeData T>
 NodePtr<T> next(NodePtr<T> node)
@@ -129,7 +132,7 @@ const T* RedBlackTree<T>::Iterator::operator->() const
 }
 
 template<ValidNodeData T>
-Iterator<T>& RedBlackTree<T>::Iterator::operator++()
+typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator++()
 {
     try
     {
@@ -147,7 +150,7 @@ Iterator<T>& RedBlackTree<T>::Iterator::operator++()
 }
 
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::Iterator::operator++(int)
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::operator++(int)
 {
     Iterator tmp(*this);
     ++(*this);
@@ -156,7 +159,7 @@ Iterator<T> RedBlackTree<T>::Iterator::operator++(int)
 }
 
 template<ValidNodeData T>
-Iterator<T>& RedBlackTree<T>::Iterator::operator--()
+typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator--()
 {
     try
     {
@@ -173,9 +176,8 @@ Iterator<T>& RedBlackTree<T>::Iterator::operator--()
     return *this;
 }
 
-
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::Iterator::operator--(int)
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::operator--(int)
 {
     Iterator tmp(*this);
     --(*this);
@@ -196,7 +198,7 @@ bool RedBlackTree<T>::Iterator::operator==(const Iterator& other) const
 }
 
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::Iterator::operator+(const difference_type& n) const
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::operator+(const difference_type& n) const
 {
     Iterator it(*this);
 
@@ -206,7 +208,7 @@ Iterator<T> RedBlackTree<T>::Iterator::operator+(const difference_type& n) const
 }
 
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::Iterator::operator-(const difference_type& n) const
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::operator-(const difference_type& n) const
 {
     Iterator it(*this);
 
@@ -216,7 +218,7 @@ Iterator<T> RedBlackTree<T>::Iterator::operator-(const difference_type& n) const
 }
 
 template<ValidNodeData T>
-Iterator<T>& RedBlackTree<T>::Iterator::operator+=(const difference_type& n)
+typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator+=(const difference_type& n)
 {
     for (auto count = n; count > 0; ++(*this), --count);
 
@@ -224,7 +226,7 @@ Iterator<T>& RedBlackTree<T>::Iterator::operator+=(const difference_type& n)
 }
 
 template<ValidNodeData T>
-Iterator<T>& RedBlackTree<T>::Iterator::operator-=(const difference_type& n)
+typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator-=(const difference_type& n)
 {
     for (auto count = n; count > 0; --(*this), --count);
 
@@ -243,7 +245,7 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 
 // ?
 template<ValidNodeData T>
-difference_type<T> RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
+RedBlackTree<T>::Iterator::difference_type RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
 {
     /* return m_index - other.m_index; */
 }
@@ -333,13 +335,13 @@ void RedBlackTree<T>::dbg_print() const
 }
 
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::begin() const
+RedBlackTree<T>::Iterator RedBlackTree<T>::begin() const
 {
     // TODO
 }
 
 template<ValidNodeData T>
-Iterator<T> RedBlackTree<T>::end() const
+RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
 {
     // TODO
 }
