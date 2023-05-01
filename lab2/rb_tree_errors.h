@@ -8,12 +8,12 @@ class ContainerError : public BaseError
 {
 public:
     ContainerError(
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info)
+        const char *info)
         : BaseError("ContainerError", filename, classname, funcname, line, time, info) {}
 };
 
@@ -21,12 +21,12 @@ class NullNodeError : public ContainerError
 {
 public:
     NullNodeError(
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info = "Null pointer passed to function."
+        const char *info = "Null pointer passed to function."
         )
         : ContainerError(filename, classname, funcname, line, time, info) {}
 };
@@ -35,12 +35,12 @@ class OrphanNodeError : public ContainerError
 {
 public:
     OrphanNodeError(
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info = "Node without parent detected."
+        const char *info = "Node without parent detected."
         )
         : ContainerError(filename, classname, funcname, line, time, info) {}
 };
@@ -51,12 +51,12 @@ class IteratorError : public BaseError
 {
 public:
     IteratorError(
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info)
+        const char *info)
         : BaseError("IteratorError", filename, classname, funcname, line, time, info) {}
 };
 
@@ -64,12 +64,12 @@ class NullNodeIError : public IteratorError
 {
 public:
     NullNodeIError(
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info = "Null node pointer detected."
+        const char *info = "Null node pointer detected."
         )
         : IteratorError(filename, classname, funcname, line, time, info) {}
 };
