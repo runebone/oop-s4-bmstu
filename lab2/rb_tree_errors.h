@@ -31,10 +31,10 @@ public:
         : ContainerError(filename, classname, funcname, line, time, info) {}
 };
 
-class OrphanNodeError : public ContainerError
+class ParentlessNodeError : public ContainerError
 {
 public:
-    OrphanNodeError(
+    ParentlessNodeError(
         const char *filename,
         const char *classname,
         const char *funcname,
@@ -73,6 +73,21 @@ public:
         )
         : IteratorError(filename, classname, funcname, line, time, info) {}
 };
+
+class ZeroIndexDecrementIError : public IteratorError
+{
+public:
+    ZeroIndexDecrementIError(
+        const char *filename,
+        const char *classname,
+        const char *funcname,
+        const int line,
+        const char *time,
+        const char *info = "Trying to decrement iterator, but it is at index 0 already."
+        )
+        : IteratorError(filename, classname, funcname, line, time, info) {}
+};
+
 #pragma endregion
 
 #endif // __RB_TREE_ERRORS_H__
