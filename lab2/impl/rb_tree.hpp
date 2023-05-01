@@ -240,14 +240,26 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 
     it = it - it.m_index + n;
 
-    return *it; // XXX
+    return *it;
 }
 
-// ?
 template<ValidNodeData T>
 RedBlackTree<T>::Iterator::difference_type RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
 {
-    /* return m_index - other.m_index; */
+    return std::distance(this, other);
+}
+
+template<ValidNodeData T>
+auto RedBlackTree<T>::Iterator::operator<=>(const Iterator& other) const
+{
+    auto distance = other - *this;
+
+    if (distance < 0)
+        return std::strong_ordering::less;
+    else if (distance > 0)
+        return std::strong_ordering::greater;
+    else
+        return std::strong_ordering::equal;
 }
 
 template<ValidNodeData T>
