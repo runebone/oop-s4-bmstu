@@ -15,17 +15,19 @@ private:
 #pragma region Node
     struct Node
     {
-        T data;
+        T key;
 
         std::weak_ptr<Node> parent;
         std::shared_ptr<Node> left;
         std::shared_ptr<Node> right;
 
         Node() = default;
-        explicit Node(T value) : data(value) {}
+        explicit Node(T value) : key(value) {}
 
         bool is_red() { return m_is_red; }
-        void change_color() { m_is_red = is_red() ? false : true; }
+
+        void make_red() { m_is_red = true; }
+        void make_black() { m_is_red = false; }
 
         void kill_children()
         {
@@ -53,7 +55,7 @@ public:
         using reference = T&;
         using difference_type = std::ptrdiff_t;
 
-        explicit Iterator(WeakNodePtr node) : m_current(node) {}
+        explicit Iterator(NodePtr node) : m_current(node) {}
         explicit Iterator(const Iterator& other);
         Iterator(Iterator&& other) noexcept;
 
@@ -77,9 +79,13 @@ public:
 
         explicit  operator bool() const;
 
+    protected:
+        NodePtr next(NodePtr node) const;
+        NodePtr prev(NodePtr node) const;
+
     private:
         WeakNodePtr m_current;
-        size_t m_index;
+        size_t m_index = 0;
     };
 #pragma endregion
 
@@ -90,6 +96,7 @@ public:
     using const_iterator = const Iterator;
 
     RedBlackTree() = default;
+    RedBlackTree(const T& data) { m_root = std::make_shared<Node>(data); }
     explicit RedBlackTree(const RedBlackTree& other);
     RedBlackTree(RedBlackTree&& other) noexcept;
     RedBlackTree(std::initializer_list<T> l);
@@ -104,7 +111,7 @@ public:
     requires IsConvertible<typename C::value_type, T>
     explicit RedBlackTree(const C& container);
 
-    virtual ~RedBlackTree();
+    ~RedBlackTree() noexcept = default;
 
     bool insert(const T& value);
     bool remove(const T& key);
@@ -131,10 +138,20 @@ public:
 
     bool operator==(const RedBlackTree& other) const;
 
+protected:
+    void insert_fixup(NodePtr node);
+    void remove_fixup(NodePtr node);
+
+    void rotate_left(NodePtr node);
+    void rotate_right(NodePtr node);
+
+    NodePtr minimum(NodePtr root) const;
+
 private:
     NodePtr m_root;
 };
 
-/* #include "impl/rb_tree.hpp" */
+#include "rb_tree_errors.h"
+#include "impl/rb_tree.hpp"
 
 #endif // __RB_TREE_H__
