@@ -9,7 +9,6 @@
 #include "concepts.h"
 
 template<ValidNodeData T>
-/* template<typename T> */
 class RedBlackTree : public BaseTree
 {
 private:
@@ -96,7 +95,16 @@ public:
     explicit RedBlackTree(const RedBlackTree& other);
     RedBlackTree(RedBlackTree&& other) noexcept;
     RedBlackTree(std::initializer_list<T> l);
-    // TODO: через деревья другого типа конструктор сделать
+
+    // Construct tree based on tree of another type
+    template<typename U>
+    requires IsConvertible<U, T>
+    explicit RedBlackTree(const RedBlackTree<U>& other);
+
+    // Construct tree based on other container of another type
+    template<IsContainer C>
+    requires IsConvertible<typename C::value_type, T>
+    explicit RedBlackTree(const C& container);
 
     virtual ~RedBlackTree();
 
