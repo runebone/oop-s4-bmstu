@@ -263,6 +263,14 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
     return *it; // XXX
 }
 
+// ?
+template<typename T>
+// requires ValidNodeData<T>
+difference_type<T> RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
+{
+    /* return m_index - other.m_index; */
+}
+
 template<typename T>
 // requires ValidNodeData<T>
 RedBlackTree<T>::Iterator::operator bool() const
@@ -309,6 +317,13 @@ bool RedBlackTree<T>::remove(const T& key)
 
 template<typename T>
 // requires ValidNodeData<T>
+bool RedBlackTree<T>::search(const T& key) const
+{
+    // TODO
+}
+
+template<typename T>
+// requires ValidNodeData<T>
 bool RedBlackTree<T>::clear()
 {
     // TODO
@@ -323,7 +338,7 @@ bool RedBlackTree<T>::is_empty() const
 
 template<typename T>
 // requires ValidNodeData<T>
-bool RedBlackTree<T>::contains(const T& value) const
+size_t RedBlackTree<T>::size() const
 {
     // TODO
 }
@@ -331,13 +346,6 @@ bool RedBlackTree<T>::contains(const T& value) const
 template<typename T>
 // requires ValidNodeData<T>
 void RedBlackTree<T>::dbg_print() const
-{
-    // TODO
-}
-
-template<typename T>
-// requires ValidNodeData<T>
-size_t RedBlackTree<T>::size() const
 {
     // TODO
 }
@@ -415,13 +423,6 @@ bool is_red(NodePtr<T> node)
 template<typename T>
 // requires ValidNodeData<T>
 void change_color(NodePtr<T> node)
-{
-    // TODO
-}
-
-template<typename T>
-// requires ValidNodeData<T>
-NodePtr<T> RedBlackTree<T>::search(const T& key) const
 {
     // TODO
 }

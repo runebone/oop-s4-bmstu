@@ -3,12 +3,14 @@
 
 #include <memory>
 #include <iterator>
+#include <compare>
 
-/* #include "concepts.h" */
+#include "base_tree.h"
+#include "concepts.h"
 
-/* template<ValidNodeData T> */
-template<typename T>
-class RedBlackTree
+template<ValidNodeData T>
+/* template<typename T> */
+class RedBlackTree : public BaseTree
 {
 private:
 #pragma region Node
@@ -71,6 +73,11 @@ public:
         Iterator& operator-=(const difference_type& n);
         const T&  operator[](const difference_type& n) const;
 
+        difference_type operator-(const Iterator& other) const;
+
+        // TODO
+        /* std::strong_ordering operator<=>(const Iterator& other) const; */
+
         explicit  operator bool() const;
 
     private:
@@ -89,24 +96,26 @@ public:
     explicit RedBlackTree(const RedBlackTree& other);
     RedBlackTree(RedBlackTree&& other) noexcept;
     RedBlackTree(std::initializer_list<T> l);
+    // TODO: через деревья другого типа конструктор сделать
 
     virtual ~RedBlackTree();
 
     bool insert(const T& value);
     bool remove(const T& key);
+    bool search(const T& key) const;
+
     bool clear();
-
-    // TODO: ordered_set.h
-    /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const; */
-
     bool is_empty() const;
-    bool contains(const T& value) const;
+
+    size_t size() const;
 
     void dbg_print() const;
 
-    size_t size() const;
+    // TODO:
+    /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
+    /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */
+    /* [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const; */
+    // balance
 
     Iterator begin() const;
     Iterator end() const;
@@ -115,9 +124,6 @@ public:
     RedBlackTree& operator=(RedBlackTree&& other);
 
     bool operator==(const RedBlackTree& other) const;
-
-protected:
-    NodePtr search(const T& key) const;
 
 private:
     NodePtr m_root;
