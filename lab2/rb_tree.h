@@ -73,9 +73,7 @@ public:
         const T&  operator[](const difference_type& n) const;
 
         difference_type operator-(const Iterator& other) const;
-
-        // TODO
-        /* std::strong_ordering operator<=>(const Iterator& other) const; */
+        auto      operator<=>(const Iterator& other) const;
 
         explicit  operator bool() const;
 
