@@ -2,35 +2,40 @@
 #define __BASE_ERROR_H__
 
 #include <exception>
-#include <string>
+#include <cstdio>
+
+#define ERROR_MESSAGE_BUFFER_SIZE 512
 
 class BaseError : public std::exception
 {
 public:
     BaseError(
-        const std::string &errorname,
-        const std::string &filename,
-        const std::string &classname,
-        const std::string &funcname,
+        const char *errorname,
+        const char *filename,
+        const char *classname,
+        const char *funcname,
         const int line,
         const char *time,
-        const std::string &info)
+        const char *info)
     {
-        msg = "In file: " + filename + "\n"
-              + "inside: " + classname + "\n"
-              + "in function: " + funcname + "\n"
-              + "at line: " + std::to_string(line) + "\n"
-              + "at: " + time + "\n"
-              + errorname + " occured: " + info;
+        sprintf(msg,
+                "In file: %s\n"
+                "inside: %s\n"
+                "in function: %s\n"
+                "at line: %d\n"
+                "at: %s\n"
+                "%s occured: %s\n",
+                filename, classname, funcname, line, time, errorname, info);
     }
 
-    [[nodiscard]] const char *what() const noexcept override
+    virtual const char *what() const noexcept override
     {
-        return msg.c_str();
+        return msg;
     }
 
 private:
-    std::string msg{};
+    static const size_t size_buf = ERROR_MESSAGE_BUFFER_SIZE;
+    char msg[size_buf]{};
 };
 
 #endif // __BASE_ERROR_H__
