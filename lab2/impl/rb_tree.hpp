@@ -25,7 +25,7 @@ using difference_type = typename RedBlackTree<T>::Iterator::difference_type;
 // }
 
 template<ValidNodeData T>
-NodePtr<T> next(NodePtr<T> node)
+typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::next(NodePtr node) const
 {
     if (node == nullptr)
     {
@@ -33,26 +33,33 @@ NodePtr<T> next(NodePtr<T> node)
         throw NullNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
     }
 
-    NodePtr<T> next_ptr = node->right;
+    NodePtr next_ptr = node->right;
 
     if (next_ptr == nullptr)
     {
-        if (node->parent == nullptr)
+        if (node->parent.lock() == nullptr)
         {
-            time_t timer = time(nullptr);
-            throw OrphanNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
+            /* time_t timer = time(nullptr); */
+            /* throw ParentlessNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer)); */
+            NodePtr empty_ptr = nullptr;
+            return empty_ptr;
+        }
+        else if (node == node->parent.lock()->right)
+        {
+            NodePtr empty_ptr = nullptr;
+            return empty_ptr;
         }
 
-        NodePtr<T> parent = node->parent;
+        NodePtr current = node;
+        NodePtr parent = node->parent.lock();
 
-        if (next_ptr == parent->left)
+        while (current != parent->left)
         {
-            next_ptr = parent;
+            current = parent;
+            parent = current->parent.lock();
         }
-        else if (next_ptr == parent->right)
-        {
-            next_ptr = parent->parent;
-        }
+
+        next_ptr = parent;
     }
     else
     {
@@ -66,7 +73,7 @@ NodePtr<T> next(NodePtr<T> node)
 }
 
 template<ValidNodeData T>
-NodePtr<T> prev(NodePtr<T> node)
+typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::prev(NodePtr node) const
 {
     if (node == nullptr)
     {
@@ -74,26 +81,33 @@ NodePtr<T> prev(NodePtr<T> node)
         throw NullNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
     }
 
-    NodePtr<T> prev_ptr = node->left;
+    NodePtr prev_ptr = node->left;
 
     if (prev_ptr == nullptr)
     {
-        if (node->parent == nullptr)
+        if (node->parent.lock() == nullptr)
         {
-            time_t timer = time(nullptr);
-            throw OrphanNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer));
+            /* time_t timer = time(nullptr); */
+            /* throw ParentlessNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer)); */
+            NodePtr empty_ptr = nullptr;
+            return empty_ptr;
+        }
+        else if (node == node->parent.lock()->left)
+        {
+            NodePtr empty_ptr = nullptr;
+            return empty_ptr;
         }
 
-        NodePtr<T> parent = node->parent;
+        NodePtr current = node;
+        NodePtr parent = node->parent.lock();
 
-        if (prev_ptr == parent->left)
+        while (current != parent->right)
         {
-            prev_ptr = parent->parent;
+            current = parent;
+            parent = current->parent.lock();
         }
-        else if (prev_ptr == parent->right)
-        {
-            prev_ptr = parent;
-        }
+
+        prev_ptr = parent;
     }
     else
     {
@@ -122,13 +136,13 @@ RedBlackTree<T>::Iterator::Iterator(Iterator&& other) noexcept
 template<ValidNodeData T>
 const T& RedBlackTree<T>::Iterator::operator*() const
 {
-    return m_current.lock()->data;
+    return m_current.lock()->key;
 }
 
 template<ValidNodeData T>
 const T* RedBlackTree<T>::Iterator::operator->() const
 {
-    return &(m_current.lock()->data);
+    return &(m_current.lock()->key);
 }
 
 template<ValidNodeData T>
@@ -136,7 +150,7 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator++()
 {
     try
     {
-        m_current = next(m_current);
+        m_current = next(m_current.lock());
     }
     catch (const NullNodeError& e)
     {
@@ -163,7 +177,7 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator--()
 {
     try
     {
-        m_current = prev(m_current);
+        m_current = prev(m_current.lock());
     }
     catch (const NullNodeError& e)
     {
@@ -188,13 +202,13 @@ typename RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::operator--(int)
 template<ValidNodeData T>
 bool RedBlackTree<T>::Iterator::operator!=(const Iterator& other) const
 {
-    return m_index != other.m_index;
+    return !(*this == other);
 }
 
 template<ValidNodeData T>
 bool RedBlackTree<T>::Iterator::operator==(const Iterator& other) const
 {
-    return m_index == other.m_index;
+    return m_current == other.current;
 }
 
 template<ValidNodeData T>
@@ -236,15 +250,34 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator-=(const 
 template<ValidNodeData T>
 const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 {
-    Iterator it(*this);
+    NodePtr current = m_current.lock();
 
-    it = it - it.m_index + n;
+    try
+    {
+        NodePtr prev_ptr = prev(current);
+
+        while (prev_ptr != nullptr)
+        {
+            current = prev_ptr;
+            prev_ptr = prev(current);
+        }
+    }
+    catch (const BaseError &e)
+    {
+        throw e;
+    }
+
+    Iterator it(current);
+    it += n;
+
+    /* Iterator it(*this); */
+    /* it = it - it.m_index + n; */
 
     return *it;
 }
 
 template<ValidNodeData T>
-RedBlackTree<T>::Iterator::difference_type RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
+typename RedBlackTree<T>::Iterator::difference_type RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
 {
     return std::distance(this, other);
 }
@@ -307,7 +340,35 @@ RedBlackTree<T>::RedBlackTree(const C& container)
 template<ValidNodeData T>
 bool RedBlackTree<T>::insert(const T& value)
 {
-    // TODO
+    NodePtr x = m_root;
+    NodePtr y = nullptr;
+    NodePtr z = std::make_shared<Node>(value);
+
+    while (x != nullptr)
+    {
+        y = x;
+
+        if (z->key < x->key)
+            x = x->left;
+        else
+            x = x->right;
+    }
+
+    z->parent = y;
+
+    if (y == nullptr)
+        m_root = z;
+    else if (z->key < y->key)
+        y->left = z;
+    else
+        y->right = z;
+
+    z->left = nullptr;
+    z->right = nullptr;
+    
+    z->make_red();
+
+    /* insert_fixup(z); */
 }
 
 template<ValidNodeData T>
@@ -325,19 +386,26 @@ bool RedBlackTree<T>::search(const T& key) const
 template<ValidNodeData T>
 bool RedBlackTree<T>::clear()
 {
-    // TODO
+    m_root->kill_children();
+    m_root.reset();
+
+    return is_empty();
 }
 
 template<ValidNodeData T>
 bool RedBlackTree<T>::is_empty() const
 {
-    // TODO
+    return m_root == nullptr;
 }
 
 template<ValidNodeData T>
 size_t RedBlackTree<T>::size() const
 {
-    // TODO
+    size_t count = 0;
+
+    /* for (auto it = this->begin(); it != this->end(); ++it, ++count); */
+
+    return count;
 }
 
 template<ValidNodeData T>
@@ -347,15 +415,16 @@ void RedBlackTree<T>::dbg_print() const
 }
 
 template<ValidNodeData T>
-RedBlackTree<T>::Iterator RedBlackTree<T>::begin() const
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::begin() const
 {
-    // TODO
+    return Iterator(minimum(m_root));
 }
 
 template<ValidNodeData T>
-RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
 {
-    // TODO
+    // XXX TODO
+    return Iterator(nullptr);
 }
 
 template<ValidNodeData T>
@@ -387,17 +456,17 @@ void RedBlackTree<T>::rotate_right(NodePtr node)
         x->right->parent = y;
     }
     x->parent = y->parent;
-    if (y->parent == nullptr)
+    if (y->parent.lock() == nullptr)
     {
         m_root = x;
     }
-    else if (y == y->parent->right)
+    else if (y == y->parent.lock()->right)
     {
-        y->parent->right = y;
+        y->parent.lock()->right = y;
     }
     else
     {
-        y->parent->left = y;
+        y->parent.lock()->left = y;
     }
     x->right = y;
 
@@ -415,17 +484,17 @@ void RedBlackTree<T>::rotate_left(NodePtr node)
         y->left->parent = x;
     }
     y->parent = x->parent;  // Передача родителя x узлу y
-    if (x->parent == nullptr)
+    if (x->parent.lock() == nullptr)
     {
         m_root = y;
     }
-    else if (x == x->parent->left)
+    else if (x == x->parent.lock()->left)
     {
-        x->parent->left = y;
+        x->parent.lock()->left = y;
     }
     else
     {
-        x->parent->right = y;
+        x->parent.lock()->right = y;
     }
     y->left = x;            // Размещение x в качестве левого
                             // дочернего узла y
@@ -435,13 +504,76 @@ void RedBlackTree<T>::rotate_left(NodePtr node)
 template<ValidNodeData T>
 void RedBlackTree<T>::insert_fixup(NodePtr node)
 {
-    // TODO
+    NodePtr z = node;
+
+    while (z->parent.lock()->is_red())
+    {
+        if (z->parent.lock() == z->parent.lock()->parent.lock()->left)
+        {
+            NodePtr y = z->parent.lock()->parent.lock()->right;
+
+            if (y->is_red())
+            {
+                z->parent.lock()->make_black();
+                y->make_black();
+                z->parent.lock()->parent.lock()->make_red();
+                z = z->parent.lock()->parent.lock();
+            }
+            else
+            {
+                if (z == z->parent.lock()->right)
+                {
+                    z = z->parent.lock();
+                    rotate_left(z);
+                }
+                z->parent.lock()->make_black();
+                z->parent.lock()->parent.lock()->make_red();
+                rotate_right(z->parent.lock()->parent.lock());
+            }
+        }
+        else
+        {
+            NodePtr y = z->parent.lock()->parent.lock()->left;
+
+            if (y->is_red())
+            {
+                z->parent.lock()->make_black();
+                y->make_black();
+                z->parent.lock()->parent.lock()->make_red();
+                z = z->parent.lock()->parent.lock();
+            }
+            else
+            {
+                if (z == z->parent.lock()->left)
+                {
+                    z = z->parent.lock();
+                    rotate_right(z);
+                }
+                z->parent.lock()->make_black();
+                z->parent.lock()->parent.lock()->make_red();
+                rotate_left(z->parent.lock()->parent.lock());
+            }
+        }
+    }
+
+    m_root->make_black();
 }
 
 template<ValidNodeData T>
 void RedBlackTree<T>::remove_fixup(NodePtr node)
 {
     // TODO
+}
+
+template<ValidNodeData T>
+typename RedBlackTree<T>::NodePtr RedBlackTree<T>::minimum(NodePtr root) const
+{
+    NodePtr current = root;
+
+    while (current != nullptr && current->left != nullptr)
+        current = current->left;
+
+    return current;
 }
 #pragma endregion // RedBlackTree
 
