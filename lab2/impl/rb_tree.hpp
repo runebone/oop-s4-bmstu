@@ -377,37 +377,69 @@ bool RedBlackTree<T>::operator==(const RedBlackTree& other) const
 }
 
 template<ValidNodeData T>
-void rotate_right(NodePtr<T> node)
+void RedBlackTree<T>::rotate_right(NodePtr node)
+{
+    NodePtr y = node;
+    NodePtr x = y->left;
+
+    if (x->right != nullptr)
+    {
+        x->right->parent = y;
+    }
+    x->parent = y->parent;
+    if (y->parent == nullptr)
+    {
+        m_root = x;
+    }
+    else if (y == y->parent->right)
+    {
+        y->parent->right = y;
+    }
+    else
+    {
+        y->parent->left = y;
+    }
+    x->right = y;
+
+    y->parent = x;
+}
+
+template<ValidNodeData T>
+void RedBlackTree<T>::rotate_left(NodePtr node)
+{
+    NodePtr x = node;       // Установка y
+    NodePtr y = x->right;   // Превращение левого поддерева y
+                            // в правое поддерево x
+    if (y->left != nullptr)
+    {
+        y->left->parent = x;
+    }
+    y->parent = x->parent;  // Передача родителя x узлу y
+    if (x->parent == nullptr)
+    {
+        m_root = y;
+    }
+    else if (x == x->parent->left)
+    {
+        x->parent->left = y;
+    }
+    else
+    {
+        x->parent->right = y;
+    }
+    y->left = x;            // Размещение x в качестве левого
+                            // дочернего узла y
+    x->parent = y;
+}
+
+template<ValidNodeData T>
+void RedBlackTree<T>::insert_fixup(NodePtr node)
 {
     // TODO
 }
 
 template<ValidNodeData T>
-void rotate_left(NodePtr<T> node)
-{
-    // TODO
-}
-
-template<ValidNodeData T>
-void fixup_insert(NodePtr<T> node)
-{
-    // TODO
-}
-
-template<ValidNodeData T>
-void fixup_remove(NodePtr<T> node)
-{
-    // TODO
-}
-
-template<ValidNodeData T>
-bool is_red(NodePtr<T> node)
-{
-    // TODO
-}
-
-template<ValidNodeData T>
-void change_color(NodePtr<T> node)
+void RedBlackTree<T>::remove_fixup(NodePtr node)
 {
     // TODO
 }
