@@ -120,17 +120,12 @@ public:
     bool insert(const T& value);
     bool remove(const T& key);
     bool contains(const T& key) const;
+    bool balance();
 
     bool clear();
     bool is_empty() const;
 
     size_t size() const;
-
-    // TODO:
-    /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const; */
-    // balance
 
     Iterator begin() const;
     Iterator end() const;
@@ -140,6 +135,11 @@ public:
     RedBlackTree& operator=(RedBlackTree&& other);
 
     bool operator==(const RedBlackTree& other) const;
+
+    // TODO:
+    /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
+    /* [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const; */
+    /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */
 
 protected:
     void insert_fixup(NodePtr node);

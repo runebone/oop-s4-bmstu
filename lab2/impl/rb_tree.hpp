@@ -440,6 +440,12 @@ bool RedBlackTree<T>::contains(const T& key) const
 }
 
 template<ValidNodeData T>
+bool RedBlackTree<T>::balance() const
+{
+    // TODO
+}
+
+template<ValidNodeData T>
 bool RedBlackTree<T>::clear()
 {
     if (m_root)
