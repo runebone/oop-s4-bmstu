@@ -23,7 +23,6 @@ concept IsConvertible = std::is_convertible<From, To>::value;
 template<typename T>
 concept IsContainer = requires {
     std::ranges::sized_range<T>; // i.e. T has begin(), end() and size() methods
-    T::value_type;
 };
 
 #endif // __CONCEPTS_H__
