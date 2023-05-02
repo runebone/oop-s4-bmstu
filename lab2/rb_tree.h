@@ -85,7 +85,6 @@ public:
 
     private:
         WeakNodePtr m_current;
-        /* size_t m_index = 0; */
     };
 #pragma endregion
 

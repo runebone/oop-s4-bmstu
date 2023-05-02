@@ -113,13 +113,13 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::prev(NodePtr node) 
 #pragma region Iterator
 template<ValidNodeData T>
 RedBlackTree<T>::Iterator::Iterator(const Iterator& other)
-    : m_current(other.m_current) //, m_index(other.m_index)
+    : m_current(other.m_current)
 {
 }
 
 template<ValidNodeData T>
 RedBlackTree<T>::Iterator::Iterator(Iterator&& other) noexcept
-    : m_current(other.m_current) //, m_index(other.m_index)
+    : m_current(other.m_current)
 {
 }
 
@@ -148,8 +148,6 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator++()
         throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
     }
 
-    /* ++m_index; */
-
     return *this;
 }
 
@@ -174,8 +172,6 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator--()
         time_t timer = time(nullptr);
         throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
     }
-
-    /* --m_index; */
 
     return *this;
 }
