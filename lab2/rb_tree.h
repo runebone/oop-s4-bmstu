@@ -111,6 +111,11 @@ public:
     requires IsConvertible<typename C::value_type, T>
     explicit RedBlackTree(const C& container);
 
+    // Construct tree based on two iterators
+    template<typename Iter>
+    requires IsConvertible<typename Iter::value_type, T>
+    RedBlackTree(Iter first, Iter last);
+
     ~RedBlackTree() noexcept = default;
 
     bool insert(const T& value);

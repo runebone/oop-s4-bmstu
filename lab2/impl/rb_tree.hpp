@@ -295,19 +295,22 @@ RedBlackTree<T>::Iterator::operator bool() const
 template<ValidNodeData T>
 RedBlackTree<T>::RedBlackTree(const RedBlackTree& other)
 {
-    // TODO
+    for (auto elem : other)
+        insert(elem);
 }
 
 template<ValidNodeData T>
 RedBlackTree<T>::RedBlackTree(RedBlackTree&& other) noexcept
 {
-    // TODO
+    for (auto elem : other)
+        insert(elem);
 }
 
 template<ValidNodeData T>
 RedBlackTree<T>::RedBlackTree(std::initializer_list<T> l)
 {
-    // TODO
+    for (auto elem : l)
+        insert(elem);
 }
 
 template<ValidNodeData T>
@@ -315,7 +318,8 @@ template<typename U>
 requires IsConvertible<U, T>
 RedBlackTree<T>::RedBlackTree(const RedBlackTree<U>& other)
 {
-    // TODO
+    for (auto elem : other)
+        insert(elem);
 }
 
 template<ValidNodeData T>
@@ -323,7 +327,17 @@ template<IsContainer C>
 requires IsConvertible<typename C::value_type, T>
 RedBlackTree<T>::RedBlackTree(const C& container)
 {
-    // TODO
+    for (auto it = container.begin(); it != container.end(); ++it)
+        insert(*it);
+}
+
+template<ValidNodeData T>
+template<typename Iter>
+requires IsConvertible<typename Iter::value_type, T>
+RedBlackTree<T>::RedBlackTree(Iter first, Iter last)
+{
+    for (; first != last; ++first)
+        insert(*first);
 }
 
 template<ValidNodeData T>
