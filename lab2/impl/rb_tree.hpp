@@ -242,6 +242,7 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 {
     NodePtr current = m_current.lock();
 
+    // XXX
     try
     {
         NodePtr prev_ptr = prev(current);
@@ -269,7 +270,7 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 template<ValidNodeData T>
 typename RedBlackTree<T>::Iterator::difference_type RedBlackTree<T>::Iterator::operator-(const Iterator& other) const
 {
-    return std::distance(this, other);
+    return std::distance(this, &other);
 }
 
 template<ValidNodeData T>
