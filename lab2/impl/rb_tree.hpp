@@ -445,13 +445,23 @@ typename RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
 template<ValidNodeData T>
 RedBlackTree<T>& RedBlackTree<T>::operator=(const RedBlackTree<T>& other)
 {
-    // TODO
+    clear();
+
+    for (auto elem : other)
+        insert(elem);
+
+    return *this;
 }
 
 template<ValidNodeData T>
 RedBlackTree<T>& RedBlackTree<T>::operator=(RedBlackTree<T>&& other)
 {
-    // TODO
+    clear();
+
+    for (auto elem : other)
+        insert(elem);
+
+    return *this;
 }
 
 template<ValidNodeData T>
