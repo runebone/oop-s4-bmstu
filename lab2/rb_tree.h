@@ -159,8 +159,7 @@ private:
 };
 
 #ifndef __RB_TREE_IMPL__
-#include "rb_tree_errors.h"
 #include "rb_tree.hpp"
-#endif
+#endif // __RB_TREE_IMPL__
 
 #endif // __RB_TREE_H__
