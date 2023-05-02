@@ -382,7 +382,54 @@ bool RedBlackTree<T>::insert(const T& value)
 template<ValidNodeData T>
 bool RedBlackTree<T>::remove(const T& key)
 {
-    // TODO
+    if (!contains(key))
+        return false;
+
+    NodePtr z = search(key);
+    NodePtr y = z;
+    NodePtr x = nullptr;
+
+    bool y_was_red = y->is_red();
+
+    if (z->left == nullptr)
+    {
+        x = z->right;
+        transplant(z, z->right);
+    }
+    else if (z->right == nullptr)
+    {
+        x = x->left;
+        transplant(z, z->left);
+    }
+    else
+    {
+        y = minimum(z->right);
+        y_was_red = y->is_red();
+        x = y->right;
+        if (y->parent.lock() == z)
+        {
+            x->parent = y;
+        }
+        else
+        {
+            transplant(y, y->right);
+            y->right = z->right;
+            y->right->parent = y;
+        }
+        transplant(z, y);
+        y->left = z->left;
+        y->left->parent = y;
+
+        if (z->is_red())
+            y->make_red();
+        else
+            y->make_black();
+    }
+
+    if (!y_was_red)
+    {
+        /* remove_fixup(x); */
+    }
 }
 
 template<ValidNodeData T>
@@ -488,12 +535,12 @@ bool RedBlackTree<T>::operator==(const RedBlackTree& other) const
 template<ValidNodeData T>
 void RedBlackTree<T>::transplant(NodePtr u, NodePtr v)
 {
-    if (u->parent == nullptr)
+    if (u->parent.lock() == nullptr)
         m_root = v;
-    else if (u == u->parent->left)
-        u->parent->left = v;
+    else if (u == u->parent.lock()->left)
+        u->parent.lock()->left = v;
     else
-        u->parent->right = v;
+        u->parent.lock()->right = v;
 
     v->parent = u->parent;
 }
