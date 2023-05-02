@@ -343,7 +343,7 @@ RedBlackTree<T>::RedBlackTree(Iter first, Iter last)
 template<ValidNodeData T>
 bool RedBlackTree<T>::insert(const T& value)
 {
-    if (search(value))
+    if (contains(value))
         return false;
 
     NodePtr x = m_root;
@@ -386,7 +386,7 @@ bool RedBlackTree<T>::remove(const T& key)
 }
 
 template<ValidNodeData T>
-bool RedBlackTree<T>::search(const T& key) const
+bool RedBlackTree<T>::contains(const T& key) const
 {
     for (auto elem : *this)
     {

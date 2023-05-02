@@ -120,7 +120,7 @@ public:
 
     bool insert(const T& value);
     bool remove(const T& key);
-    bool search(const T& key) const;
+    bool contains(const T& key) const;
 
     bool clear();
     bool is_empty() const;
