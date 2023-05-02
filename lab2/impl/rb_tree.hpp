@@ -208,7 +208,7 @@ bool RedBlackTree<T>::Iterator::operator!=(const Iterator& other) const
 template<ValidNodeData T>
 bool RedBlackTree<T>::Iterator::operator==(const Iterator& other) const
 {
-    return m_current == other.current;
+    return m_current == other.m_current;
 }
 
 template<ValidNodeData T>
