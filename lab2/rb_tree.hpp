@@ -686,13 +686,15 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::minimum(NodePtr root) const
 template<ValidNodeData T>
 typename RedBlackTree<T>::NodePtr RedBlackTree<T>::search(NodePtr node, const T& key)
 {
-	if (node == nullptr || node->key == key)
-		return node;
+    while (node != nullptr && node->key != key)
+    {
+        if (key < node->key)
+            node = node->left;
+        else
+            node = node->right;
+    }
 
-	if (node->key > key)
-		return search(node->left, key);
-
-	return search(node->right, key);
+    return node;
 }
 
 template<ValidNodeData T>
