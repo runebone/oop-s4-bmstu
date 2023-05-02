@@ -628,6 +628,24 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::minimum(NodePtr root) const
 
     return current;
 }
+
+template<ValidNodeData T>
+typename RedBlackTree<T>::NodePtr RedBlackTree<T>::search(NodePtr node, const T& key)
+{
+	if (node == nullptr || node->key == key)
+		return node;
+
+	if (node->key > key)
+		return search(node->left, key);
+
+	return search(node->right, key);
+}
+
+template<ValidNodeData T>
+typename RedBlackTree<T>::NodePtr RedBlackTree<T>::search(const T& key)
+{
+    return search(m_root, key);
+}
 #pragma endregion // RedBlackTree
 
 #endif // __RB_TREE_IMPL__

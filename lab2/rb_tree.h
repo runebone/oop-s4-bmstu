@@ -155,6 +155,9 @@ protected:
 
     NodePtr minimum(NodePtr root) const;
 
+    NodePtr search(NodePtr node, const T& key);
+    NodePtr search(const T& key);
+
 private:
     NodePtr m_root;
 };
