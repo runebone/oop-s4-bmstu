@@ -1,6 +1,7 @@
 #ifndef __RB_TREE_IMPL__
 #define __RB_TREE_IMPL__
 
+#include "rb_tree_errors.h"
 #include "rb_tree.h"
 
 template<ValidNodeData T>
@@ -663,7 +664,86 @@ void RedBlackTree<T>::insert_fixup(NodePtr node)
 template<ValidNodeData T>
 void RedBlackTree<T>::remove_fixup(NodePtr node)
 {
-    // TODO
+    NodePtr x = node;
+
+    while (x != m_root && !(x->is_red()))
+    {
+        if (x == x->parent.lock()->left)
+        {
+            NodePtr w = x->parent.lock()->right;
+
+            if (w->is_red())
+            {
+                w->make_black();
+                x->parent.lock()->make_red();
+                rotate_left(x->parent.lock());
+                w = x->parent.lock()->right;
+            }
+            if (!w->left->is_red() && !w->right->is_red())
+            {
+                w->make_red();
+                x = x->parent.lock();
+            }
+            else
+            {
+                if (!w->right->is_red())
+                {
+                    w->left->make_black();
+                    w->make_red();
+                    rotate_right(w);
+                    w = x->parent.lock()->right;
+                }
+
+                if (x->parent.lock()->is_red())
+                    w->make_red();
+                else
+                    w->make_black();
+
+                x->parent.lock()->make_black();
+                w->right->make_black();
+                rotate_left(x->parent.lock());
+                x = m_root;
+            }
+        }
+        else
+        {
+            NodePtr w = x->parent.lock()->left;
+            if (w->is_red())
+            {
+                w->make_black();
+                x->parent.lock()->make_red();
+                rotate_right(x->parent.lock());
+                w = x->parent.lock()->left;
+            }
+            if (!w->right->is_red() && !w->left->is_red())
+            {
+                w->make_red();
+                x = x->parent.lock();
+            }
+            else
+            {
+                if (!w->left->is_red())
+                {
+                    w->right->make_black();
+                    w->make_red();
+                    rotate_left(w);
+                    w = x->parent.lock()->left;
+                }
+
+                if (x->parent.lock()->is_red())
+                    w->make_red();
+                else
+                    w->make_black();
+
+                x->parent.lock()->make_black();
+                w->left->make_black();
+                rotate_right(x->parent.lock());
+                x = m_root;
+            }
+        }
+    }
+
+    x->make_black();
 }
 
 template<ValidNodeData T>
