@@ -426,6 +426,8 @@ bool RedBlackTree<T>::remove(const T& key)
     {
         /* remove_fixup(x); */
     }
+
+    return true;
 }
 
 template<ValidNodeData T>
@@ -440,7 +442,7 @@ bool RedBlackTree<T>::contains(const T& key) const
 }
 
 template<ValidNodeData T>
-bool RedBlackTree<T>::balance() const
+bool RedBlackTree<T>::balance()
 {
     // TODO
 }
