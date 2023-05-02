@@ -137,6 +137,7 @@ public:
 
     Iterator begin() const;
     Iterator end() const;
+    Iterator find(const T& key) const;
 
     RedBlackTree& operator=(const RedBlackTree& other);
     RedBlackTree& operator=(RedBlackTree&& other);

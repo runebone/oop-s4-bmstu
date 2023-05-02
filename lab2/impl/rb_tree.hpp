@@ -443,6 +443,21 @@ typename RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
 }
 
 template<ValidNodeData T>
+typename RedBlackTree<T>::Iterator RedBlackTree<T>::find(const T& key) const
+{
+    if (!contains(key))
+        return Iterator(nullptr);
+
+    Iterator it = begin();
+
+    for (; it != end(); ++it)
+    {
+        if (*it == key)
+            return it;
+    }
+}
+
+template<ValidNodeData T>
 RedBlackTree<T>& RedBlackTree<T>::operator=(const RedBlackTree<T>& other)
 {
     clear();
