@@ -5,24 +5,6 @@
 #include "rb_tree.h"
 
 template<ValidNodeData T>
-using Node = typename RedBlackTree<T>::Node;
-
-template<ValidNodeData T>
-using NodePtr = typename RedBlackTree<T>::NodePtr;
-
-template<ValidNodeData T>
-using WeakNodePtr = typename RedBlackTree<T>::WeakNodePtr;
-
-// Do I need them?
-// {
-template<ValidNodeData T>
-using Iterator = typename RedBlackTree<T>::Iterator;
-
-template<ValidNodeData T>
-using difference_type = typename RedBlackTree<T>::Iterator::difference_type;
-// }
-
-template<ValidNodeData T>
 typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::next(NodePtr node) const
 {
     if (node == nullptr)
@@ -37,8 +19,6 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::next(NodePtr node) 
     {
         if (node->parent.lock() == nullptr)
         {
-            /* time_t timer = time(nullptr); */
-            /* throw ParentlessNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer)); */
             NodePtr empty_ptr = nullptr;
             return empty_ptr;
         }
@@ -80,8 +60,6 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::prev(NodePtr node) 
     {
         if (node->parent.lock() == nullptr)
         {
-            /* time_t timer = time(nullptr); */
-            /* throw ParentlessNodeError(__FILE__, "Node<T>", __func__, __LINE__, ctime(&timer)); */
             NodePtr empty_ptr = nullptr;
             return empty_ptr;
         }
@@ -236,7 +214,6 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
 {
     NodePtr current = m_current.lock();
 
-    // XXX
     try
     {
         NodePtr prev_ptr = prev(current);
@@ -247,9 +224,10 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
             prev_ptr = prev(current);
         }
     }
-    catch (const BaseError &e)
+    catch (const NullNodeError &e)
     {
-        throw e;
+        time_t timer = time(nullptr);
+        throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
     }
 
     Iterator it(current);
