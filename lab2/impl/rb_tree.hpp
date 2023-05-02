@@ -329,6 +329,9 @@ RedBlackTree<T>::RedBlackTree(const C& container)
 template<ValidNodeData T>
 bool RedBlackTree<T>::insert(const T& value)
 {
+    if (search(value))
+        return false;
+
     NodePtr x = m_root;
     NodePtr y = nullptr;
     NodePtr z = std::make_shared<Node>(value);
@@ -358,6 +361,8 @@ bool RedBlackTree<T>::insert(const T& value)
     z->make_red();
 
     /* insert_fixup(z); */
+
+    return true;
 }
 
 template<ValidNodeData T>
@@ -369,7 +374,12 @@ bool RedBlackTree<T>::remove(const T& key)
 template<ValidNodeData T>
 bool RedBlackTree<T>::search(const T& key) const
 {
-    // TODO
+    for (auto elem : *this)
+    {
+        if (elem == key)
+            return true;
+    }
+    return false;
 }
 
 template<ValidNodeData T>
