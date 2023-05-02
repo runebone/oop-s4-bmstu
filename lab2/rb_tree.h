@@ -159,7 +159,9 @@ private:
     NodePtr m_root;
 };
 
+#ifndef __RB_TREE_IMPL__
 #include "rb_tree_errors.h"
-#include "impl/rb_tree.hpp"
+#include "rb_tree.hpp"
+#endif
 
 #endif // __RB_TREE_H__

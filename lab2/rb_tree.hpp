@@ -1,10 +1,7 @@
 #ifndef __RB_TREE_IMPL__
 #define __RB_TREE_IMPL__
 
-/* #include "../rb_tree.h" */
-/* #include "../rb_tree_errors.h" */
-
-/* #include "../concepts.h" */
+#include "rb_tree.h"
 
 template<ValidNodeData T>
 using Node = typename RedBlackTree<T>::Node;
