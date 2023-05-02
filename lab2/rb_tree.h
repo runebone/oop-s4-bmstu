@@ -136,10 +136,10 @@ public:
 
     bool operator==(const RedBlackTree& other) const;
 
-    // TODO:
-    /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const; */
-    /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */
+    [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const;
+    [[nodiscard]] RedBlackTree get_intersection(const RedBlackTree &other) const;
+    [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const;
+    [[nodiscard]] RedBlackTree get_sym_difference(const RedBlackTree &other) const;
 
 protected:
     void insert_fixup(NodePtr node);

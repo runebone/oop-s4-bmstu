@@ -703,6 +703,61 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::search(const T& key)
 {
     return search(m_root, key);
 }
+
+
+template<ValidNodeData T>
+RedBlackTree<T> RedBlackTree<T>::get_union(const RedBlackTree &other) const
+{
+    RedBlackTree result;
+
+    for (auto elem : *this)
+        result.insert(elem);
+
+    for (auto elem : other)
+        result.insert(elem);
+
+    return result;
+}
+
+template<ValidNodeData T>
+RedBlackTree<T> RedBlackTree<T>::get_intersection(const RedBlackTree &other) const
+{
+    RedBlackTree result;
+
+    for (auto elem : *this)
+        if (other.contains(elem))
+            result.insert(elem);
+
+    return result;
+}
+
+template<ValidNodeData T>
+RedBlackTree<T> RedBlackTree<T>::get_difference(const RedBlackTree &other) const
+{
+    RedBlackTree result;
+
+    for (auto elem : *this)
+        if (!other.contains(elem))
+            result.insert(elem);
+
+    return result;
+}
+
+template<ValidNodeData T>
+RedBlackTree<T> RedBlackTree<T>::get_sym_difference(const RedBlackTree &other) const
+{
+    RedBlackTree result;
+
+    for (auto elem : *this)
+        if (!other.contains(elem))
+            result.insert(elem);
+
+    for (auto elem : other)
+        if (!this->contains(elem))
+            result.insert(elem);
+
+    return result;
+}
 #pragma endregion // RedBlackTree
 
 #endif // __RB_TREE_IMPL__
