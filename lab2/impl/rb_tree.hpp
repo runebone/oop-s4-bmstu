@@ -529,7 +529,19 @@ RedBlackTree<T>& RedBlackTree<T>::operator=(RedBlackTree<T>&& other)
 template<ValidNodeData T>
 bool RedBlackTree<T>::operator==(const RedBlackTree& other) const
 {
-    // TODO
+    if (size() != other.size())
+        return false;
+
+    auto this_it = begin();
+    auto other_it = other.begin();
+
+    for (; this_it != end(); ++this_it, ++other_it)
+    {
+        if (*this_it != *other_it)
+            return false;
+    }
+
+    return true;
 }
 
 template<ValidNodeData T>
