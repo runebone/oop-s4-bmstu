@@ -44,16 +44,11 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::next(NodePtr node) 
             NodePtr empty_ptr = nullptr;
             return empty_ptr;
         }
-        else if (node == node->parent.lock()->right)
-        {
-            NodePtr empty_ptr = nullptr;
-            return empty_ptr;
-        }
 
         NodePtr current = node;
         NodePtr parent = node->parent.lock();
 
-        while (current != parent->left)
+        while (parent != nullptr && current != parent->left)
         {
             current = parent;
             parent = current->parent.lock();
@@ -92,16 +87,11 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::prev(NodePtr node) 
             NodePtr empty_ptr = nullptr;
             return empty_ptr;
         }
-        else if (node == node->parent.lock()->left)
-        {
-            NodePtr empty_ptr = nullptr;
-            return empty_ptr;
-        }
 
         NodePtr current = node;
         NodePtr parent = node->parent.lock();
 
-        while (current != parent->right)
+        while (parent != nullptr && current != parent->right)
         {
             current = parent;
             parent = current->parent.lock();
@@ -123,13 +113,13 @@ typename RedBlackTree<T>::NodePtr RedBlackTree<T>::Iterator::prev(NodePtr node) 
 #pragma region Iterator
 template<ValidNodeData T>
 RedBlackTree<T>::Iterator::Iterator(const Iterator& other)
-    : m_current(other.m_current), m_index(other.m_index)
+    : m_current(other.m_current) //, m_index(other.m_index)
 {
 }
 
 template<ValidNodeData T>
 RedBlackTree<T>::Iterator::Iterator(Iterator&& other) noexcept
-    : m_current(other.m_current), m_index(other.m_index)
+    : m_current(other.m_current) //, m_index(other.m_index)
 {
 }
 
@@ -158,7 +148,7 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator++()
         throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
     }
 
-    ++m_index;
+    /* ++m_index; */
 
     return *this;
 }
@@ -185,7 +175,7 @@ typename RedBlackTree<T>::Iterator& RedBlackTree<T>::Iterator::operator--()
         throw NullNodeIError(__FILE__, "RedBlackTree<T>::Iterator", __func__, __LINE__, ctime(&timer));
     }
 
-    --m_index;
+    /* --m_index; */
 
     return *this;
 }
