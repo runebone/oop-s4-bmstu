@@ -376,8 +376,11 @@ bool RedBlackTree<T>::search(const T& key) const
 template<ValidNodeData T>
 bool RedBlackTree<T>::clear()
 {
-    m_root->kill_children();
-    m_root.reset();
+    if (m_root)
+    {
+        m_root->kill_children();
+        m_root.reset();
+    }
 
     return is_empty();
 }
