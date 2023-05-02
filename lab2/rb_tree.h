@@ -120,7 +120,6 @@ public:
     bool insert(const T& value);
     bool remove(const T& key);
     bool contains(const T& key) const;
-    bool balance();
 
     bool clear();
     bool is_empty() const;
