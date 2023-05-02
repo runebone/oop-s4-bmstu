@@ -126,8 +126,6 @@ public:
 
     size_t size() const;
 
-    void dbg_print() const;
-
     // TODO:
     /* [[nodiscard]] RedBlackTree get_union(const RedBlackTree &other) const; */
     /* [[nodiscard]] RedBlackTree get_difference(const RedBlackTree &other) const; */

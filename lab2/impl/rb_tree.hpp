@@ -468,12 +468,6 @@ size_t RedBlackTree<T>::size() const
 }
 
 template<ValidNodeData T>
-void RedBlackTree<T>::dbg_print() const
-{
-    // TODO
-}
-
-template<ValidNodeData T>
 typename RedBlackTree<T>::Iterator RedBlackTree<T>::begin() const
 {
     return Iterator(minimum(m_root));
