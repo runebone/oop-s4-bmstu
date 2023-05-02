@@ -142,6 +142,8 @@ protected:
     void insert_fixup(NodePtr node);
     void remove_fixup(NodePtr node);
 
+    void transplant(NodePtr u, NodePtr v);
+
     void rotate_left(NodePtr node);
     void rotate_right(NodePtr node);
 

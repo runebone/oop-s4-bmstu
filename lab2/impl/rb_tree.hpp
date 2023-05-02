@@ -447,6 +447,19 @@ bool RedBlackTree<T>::operator==(const RedBlackTree& other) const
 }
 
 template<ValidNodeData T>
+void RedBlackTree<T>::transplant(NodePtr u, NodePtr v)
+{
+    if (u->parent == nullptr)
+        m_root = v;
+    else if (u == u->parent->left)
+        u->parent->left = v;
+    else
+        u->parent->right = v;
+
+    v->parent = u->parent;
+}
+
+template<ValidNodeData T>
 void RedBlackTree<T>::rotate_right(NodePtr node)
 {
     NodePtr y = node;
