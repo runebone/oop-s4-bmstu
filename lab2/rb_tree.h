@@ -132,6 +132,7 @@ public:
 
     RedBlackTree& operator=(const RedBlackTree& other);
     RedBlackTree& operator=(RedBlackTree&& other);
+    RedBlackTree& operator=(std::initializer_list<T> l);
 
     bool operator==(const RedBlackTree& other) const;
 

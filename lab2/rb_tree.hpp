@@ -517,6 +517,17 @@ RedBlackTree<T>& RedBlackTree<T>::operator=(RedBlackTree<T>&& other)
 }
 
 template<ValidNodeData T>
+RedBlackTree<T>& RedBlackTree<T>::operator=(std::initializer_list<T> l)
+{
+    clear();
+
+    for (auto elem : l)
+        insert(elem);
+
+    return *this;
+}
+
+template<ValidNodeData T>
 bool RedBlackTree<T>::operator==(const RedBlackTree& other) const
 {
     if (size() != other.size())
