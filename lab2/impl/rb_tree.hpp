@@ -259,10 +259,8 @@ const T& RedBlackTree<T>::Iterator::operator[](const difference_type& n) const
     }
 
     Iterator it(current);
-    it += n;
 
-    /* Iterator it(*this); */
-    /* it = it - it.m_index + n; */
+    it += n;
 
     return *it;
 }
@@ -397,7 +395,7 @@ size_t RedBlackTree<T>::size() const
 {
     size_t count = 0;
 
-    /* for (auto it = this->begin(); it != this->end(); ++it, ++count); */
+    for (auto it = this->begin(); it != this->end(); ++it, ++count);
 
     return count;
 }
@@ -417,7 +415,6 @@ typename RedBlackTree<T>::Iterator RedBlackTree<T>::begin() const
 template<ValidNodeData T>
 typename RedBlackTree<T>::Iterator RedBlackTree<T>::end() const
 {
-    // XXX TODO
     return Iterator(nullptr);
 }
 
