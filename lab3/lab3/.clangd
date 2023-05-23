@@ -1,0 +1,10 @@
+CompileFlags:
+    Add:
+    - -I/home/human/University/oop/lab3/lab3
+    - -I/home/human/University/oop/lab3/build-lab3-Desktop-Debug/lab3_autogen/include
+    - -I/home/human/University/oop/lab3/lab3/creators
+    - -I/home/human/University/oop/lab3/lab3/facades
+    - -I/home/human/University/oop/lab3/lab3/managers
+    - -I/home/human/University/oop/lab3/lab3/commands
+    - -std=c++20
+    - -fPIC
