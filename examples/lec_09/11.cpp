@@ -18,7 +18,7 @@ int main()
     unique_ptr<A> obj1(new A{});
     unique_ptr<A> obj2 = make_unique<A>();
     unique_ptr<A> obj3(obj1.release()); // move(obj1)
-                                        //
+
     obj1 = move(obj3);
 
     if (!obj3)

@@ -39,6 +39,7 @@ int main()
 {
     Less<double> d1;
     cout << boolalpha << d1(2., 3.) << endl;
+    cout << boolalpha << d1(3., 2.) << endl;
     Less d2;
     int a = 0, b = 1;
     cout << boolalpha << d2(a, b) << endl;
@@ -46,4 +47,5 @@ int main()
 
 /* Outputs: */
 /* true */
+/* false */
 /* false */

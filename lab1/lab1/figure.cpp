@@ -23,6 +23,11 @@ static err_t read_figure(figure_t &figure, FILE *opened_file)
     if (error_code == OK)
     {
         error_code = read_edges(figure.edges, opened_file);
+
+        if (error_code != OK)
+        {
+            free_points(figure.points);
+        }
     }
 
     return error_code;

@@ -106,7 +106,7 @@ static err_t allocate_edge_array(edge_array_t &edge_array, int n)
 
     if (edge_array.array == NULL)
     {
-        error_code = ERR_MALLOC;
+        return ERR_MALLOC;
     }
 
     edge_array.size = n;
