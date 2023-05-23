@@ -1,6 +1,6 @@
 /* #include "mainwindow.h" */
 
-/* #include <QApplication> */
+/* #include <QtWidgets/QApplication> */
 
 #include "application.h"
 

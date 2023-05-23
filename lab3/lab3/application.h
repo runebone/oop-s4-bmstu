@@ -33,6 +33,8 @@ public:
 private:
     std::string m_configPath;
     std::unique_ptr<BaseConfigReader> m_configReader;
+
+    // Должна владеть ссылками на мост графической подсистемы
 };
 
 #endif // __APPLICATION_H__

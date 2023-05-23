@@ -11,6 +11,7 @@
 class ControllerFacade
 {
 public:
+    ControllerFacade();
     /* void execute(BaseCommand &command); */
 
 private:
