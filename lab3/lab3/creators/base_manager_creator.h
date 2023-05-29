@@ -10,15 +10,18 @@ concept ManagerType = requires {
     std::is_base_of<BaseManager, T>::value;
 };
 
+template <ManagerType T>
 class BaseManagerCreator
 {
 public:
-    virtual ~BaseManagerCreator() = 0;
+    using manager_type = T;
 
-    template <ManagerType T>
-    std::shared_ptr<T> create()
+    virtual std::shared_ptr<manager_type> get() = 0;
+
+protected:
+    static std::shared_ptr<manager_type> create()
     {
-        return std::make_shared<T>(new T);
+        return std::make_shared<manager_type>(new manager_type);
     }
 };
 

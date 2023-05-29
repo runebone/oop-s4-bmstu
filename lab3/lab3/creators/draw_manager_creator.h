@@ -7,15 +7,19 @@
 #include "base_manager.h"
 #include "draw_manager.h"
 
-class DrawManagerCreator : public BaseManagerCreator
+class DrawManagerCreator : public BaseManagerCreator<DrawManager>
 {
 public:
-    using manager_type = DrawManager;
-
-    std::shared_ptr<manager_type> create()
+    std::shared_ptr<manager_type> get()
     {
-        return BaseManagerCreator::create<manager_type>();
+        if (m_instance == nullptr)
+            m_instance = BaseManagerCreator::create();
+
+        return m_instance;
     }
+
+private:
+    std::shared_ptr<manager_type> m_instance = nullptr;
 };
 
 #endif // __DRAW_MANAGER_CREATOR_H__
