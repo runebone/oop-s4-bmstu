@@ -12,7 +12,7 @@ concept ManagerCreator = requires {
 
 template <typename T>
 concept GuiFrameworkCreator = requires {
-    typename T::test;
+    typename T::test; // TODO
 };
 
 class LordOfTheCreators
@@ -38,7 +38,7 @@ template <GuiFrameworkCreator T>
 decltype(auto) LordOfTheCreators::create()
 {
     auto _creator = T();
-    auto _ = _creator.create();
+    auto _ = _creator.create(); // TODO
 
     return _;
 }

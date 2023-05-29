@@ -6,6 +6,7 @@
 #include "load_manager_creator.h"
 #include "scene_manager_creator.h"
 #include "transform_manager_creator.h"
+#include "camera_manager_creator.h"
 
 inline ControllerFacade::ControllerFacade()
 {
@@ -15,4 +16,5 @@ inline ControllerFacade::ControllerFacade()
     /* m_loadManager = lord.create<LoadManagerCreator>(); */
     /* m_sceneManager = lord.create<SceneManagerCreator>(); */
     /* m_transformManager = lord.create<TransformManagerCreator>(); */
+    /* m_cameraManager = lord.create<CameraManagerCreator>(); */
 }
