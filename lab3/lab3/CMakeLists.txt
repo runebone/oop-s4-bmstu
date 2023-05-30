@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ###############################################################################
 
-set(USE_QT FALSE)
+set(USE_QT TRUE)
 
 set(PROJECT_SOURCES
         main.cpp

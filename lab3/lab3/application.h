@@ -8,7 +8,7 @@
 
 #include "guis/gui_bridge.h"
 #include "guis/qt6_impl.h"
-#include "guis/imgui_opengl3_glfw_impl.h"
+// #include "guis/imgui_opengl3_glfw_impl.h"
 
 class LabApplication
 {
@@ -34,13 +34,12 @@ public:
 
         m_guiFramework = std::make_unique<GUIBridge>();
 
-        config.gui = IMGUI_OPENGL3_GLFW;
-
         if (config.gui == QT6) {
             m_guiFramework->set_gui(std::make_unique<Qt6GUI>());
-        } else if (config.gui == IMGUI_OPENGL3_GLFW) {
-            m_guiFramework->set_gui(std::make_unique<ImguiOpengl3GLFWGUI>());
         }
+        // else if (config.gui == IMGUI_OPENGL3_GLFW) {
+            // m_guiFramework->set_gui(std::make_unique<ImguiOpengl3GLFWGUI>());
+        // }
     }
 
     int run()
