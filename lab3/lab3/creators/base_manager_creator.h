@@ -16,6 +16,8 @@ class BaseManagerCreator
 public:
     using manager_type = T;
 
+    virtual ~BaseManagerCreator() = default;
+
     virtual std::shared_ptr<manager_type> get() = 0;
 
 protected:

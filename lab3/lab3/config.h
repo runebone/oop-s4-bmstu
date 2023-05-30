@@ -10,10 +10,15 @@ enum ConfigType
     YAML,
 };
 
+enum GuiType
+{
+    QT6,
+    IMGUI_OPENGL3_GLFW,
+};
+
 struct Config
 {
-    std::string gui;
-    std::string window;
+    GuiType gui;
 };
 
 class BaseConfigReader
@@ -28,8 +33,8 @@ public:
     bool readConfig(Config &config, std::string &configPath)
     {
         // XXX
-        config.gui = "qt6";
-        config.window = "glfw";
+        config.gui = QT6;
+
         return true;
     }
 };
@@ -43,9 +48,11 @@ public:
 class YAMLConfigReaderCreator : public BaseConfigReaderCreator
 {
 public:
+    // FIXME: make singleton?
     std::unique_ptr<BaseConfigReader> createConfigReader()
     {
-        std::unique_ptr<BaseConfigReader> configReader(new YAMLConfigReader());
+        std::unique_ptr<BaseConfigReader> configReader(new YAMLConfigReader);
+
         return configReader;
     }
 };

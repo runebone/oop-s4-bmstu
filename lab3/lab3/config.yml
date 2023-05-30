@@ -1,2 +1,1 @@
-gui: qt6 # imgui
-window: glfw # if gui == imgui
+gui: qt6 # or imgui+glfw

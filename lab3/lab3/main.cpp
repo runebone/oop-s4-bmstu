@@ -12,5 +12,8 @@ int main(int argc, char *argv[])
     /* return a.exec(); */
 
     LabApplication a;
-    /* return a.exec(); */
+
+    // auto qt = new Qt6GUI;
+    // qt->run();
+    a.run();
 }

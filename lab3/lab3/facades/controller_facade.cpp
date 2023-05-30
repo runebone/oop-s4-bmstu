@@ -1,4 +1,4 @@
-#include "controller_facade.h"
+#include "facade.h"
 
 #include "lord_of_the_creators.h"
 
@@ -8,11 +8,11 @@
 #include "transform_manager_creator.h"
 #include "camera_manager_creator.h"
 
-inline ControllerFacade::ControllerFacade()
+inline Facade::Facade()
 {
     auto lord = LordOfTheCreators();
 
-    m_drawManager = lord.create<DrawManagerCreator>();
+    /* m_drawManager = lord.create<DrawManagerCreator>(); */
     /* m_loadManager = lord.create<LoadManagerCreator>(); */
     /* m_sceneManager = lord.create<SceneManagerCreator>(); */
     /* m_transformManager = lord.create<TransformManagerCreator>(); */
