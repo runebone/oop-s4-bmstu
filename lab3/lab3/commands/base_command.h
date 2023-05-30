@@ -6,6 +6,7 @@ class BaseCommand
 public:
     BaseCommand() = default;
     virtual ~BaseCommand() = default;
+
     virtual void exec() = 0;
 };
 
