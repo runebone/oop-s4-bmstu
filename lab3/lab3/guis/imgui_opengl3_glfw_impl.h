@@ -5,20 +5,20 @@
 
 #include "imgui_opengl3_glfw_ui_impl/includes.h"
 
-// GLFW callback functions
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void process_input(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 class ImguiOpengl3GLFWGUI : public GUI
 {
+    // GLFW callback functions
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+    {
+        glViewport(0, 0, width, height);
+    }
+
+    static void process_input(GLFWwindow* window)
+    {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+    }
+
 public:
     int run()
     {
