@@ -1,0 +1,4 @@
+CompileFlags:
+    Add:
+    - -I/home/human/Code/boost_1_82_0
+    - -std=c++20
