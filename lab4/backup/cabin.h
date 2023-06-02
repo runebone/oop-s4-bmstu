@@ -71,15 +71,15 @@ public:
     {
         bool doors_are_closed = m_doors.get_state() == Doors::Closed;
 
-        switch (m_state)
+        if (!doors_are_closed)
         {
-            case Idling:
-                if (!doors_are_closed)
-                {
-                    write("Кабина не может начать движение вверх с открытыми дверями.");
-                }
-                else
-                {
+            write("Кабина не может начать движение вверх с открытыми дверями.");
+        }
+        else
+        {
+            switch (m_state)
+            {
+                case Idling:
                     write("Кабина начала движение вверх.");
                     update(MovingUp);
                     schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
@@ -87,21 +87,21 @@ public:
                             emit cabin_moved_up_signal();
                             update(Idling); // XXX
                             });
-                }
-                break;
-            case Waiting:
-                write("Кабина ожидает. Пока нельзя начать движение вверх.");
-                break;
-            case MovingUp:
-                /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
-                /*     // FIXME: DRY */
-                /*     write("Кабина поднялась на этаж выше."); */
-                /*     emit cabin_moved_up_signal(); */
-                /* }); */
-                break;
-            case MovingDown:
-                write("Кабина не может изменить направление своего движения во время движения.");
-                break;
+                    break;
+                case Waiting:
+                    write("Кабина ожидает. Пока нельзя начать движение вверх.");
+                    break;
+                case MovingUp:
+                    /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
+                    /*     // FIXME: DRY */
+                    /*     write("Кабина поднялась на этаж выше."); */
+                    /*     emit cabin_moved_up_signal(); */
+                    /* }); */
+                    break;
+                case MovingDown:
+                    write("Кабина не может изменить направление своего движения во время движения.");
+                    break;
+            }
         }
     }
 
