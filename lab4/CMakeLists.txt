@@ -9,8 +9,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 
-set(PROJECT_SOURCES
-    main.cpp
+set(COMMON_SRC
+    writer.h
+    doors.h
+    cabin.h
+    controller.h
     )
 
 set(CLIENT_SRC
@@ -33,13 +36,10 @@ set(LINK_DIRS
 include_directories(${INCLUDE_DIRS})
 link_directories(${LINK_DIRS})
 
-add_executable(${EXE} ${PROJECT_SOURCES})
-target_link_libraries(${EXE} boost_system boost_thread)
-
-add_executable(server ${SERVER_SRC})
+add_executable(server ${SERVER_SRC} ${COMMON_SRC})
 target_link_libraries(server boost_system boost_thread)
 
-add_executable(client ${CLIENT_SRC})
+add_executable(client ${CLIENT_SRC} ${COMMON_SRC})
 target_link_libraries(client boost_system boost_thread)
 
 # if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

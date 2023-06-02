@@ -4,9 +4,9 @@
 
 using boost::asio::ip::tcp;
 
-class ElevatorSession : public std::enable_shared_from_this<ElevatorSession> {
+class ChatSession : public std::enable_shared_from_this<ChatSession> {
 public:
-    ElevatorSession(tcp::socket socket, std::list<std::shared_ptr<ElevatorSession>>& clients)
+    ChatSession(tcp::socket socket, std::list<std::shared_ptr<ChatSession>>& clients)
         : socket_(std::move(socket)), clients_(clients) {}
 
     void start()
@@ -41,14 +41,14 @@ private:
 
                     std::cout << message << std::endl;
 
-                    /* message += '\n'; */
-                    /* broadcast(message); */
+                    message += '\n';
+                    broadcast(message);
 
                     doRead();
                 }
                 else if (ec == boost::asio::error::eof || ec == boost::asio::error::connection_reset)
                 {
-                    std::cerr << "Client disconnected." << std::endl;
+                    std::cerr << "Client disconnected" << std::endl;
                     clients_.remove(shared_from_this()); // Remove this session from the list of clients
                 }
                 else
@@ -61,12 +61,12 @@ private:
 
     tcp::socket socket_;
     boost::asio::streambuf inputBuffer_;
-    std::list<std::shared_ptr<ElevatorSession>>& clients_;
+    std::list<std::shared_ptr<ChatSession>>& clients_;
 };
 
-class ElevatorServer {
+class ChatServer {
 public:
-    ElevatorServer(boost::asio::io_context& ioContext, short port)
+    ChatServer(boost::asio::io_context& ioContext, short port)
         : acceptor_(ioContext, tcp::endpoint(tcp::v4(), port))
     {
         startAccept();
@@ -80,9 +80,9 @@ private:
             {
                 if (!ec)
                 {
-                    std::cout << "New client connected." << std::endl;
+                    std::cout << "New client connected" << std::endl;
 
-                    std::shared_ptr<ElevatorSession> session = std::make_shared<ElevatorSession>(std::move(socket), clients_);
+                    std::shared_ptr<ChatSession> session = std::make_shared<ChatSession>(std::move(socket), clients_);
                     session->start();
                 }
 
@@ -91,7 +91,7 @@ private:
     }
 
     tcp::acceptor acceptor_;
-    std::list<std::shared_ptr<ElevatorSession>> clients_;
+    std::list<std::shared_ptr<ChatSession>> clients_;
 };
 
 int main()
@@ -100,7 +100,7 @@ int main()
     {
         boost::asio::io_context ioContext;
 
-        ElevatorServer server(ioContext, 12345);
+        ChatServer server(ioContext, 12345);
 
         ioContext.run();
     }

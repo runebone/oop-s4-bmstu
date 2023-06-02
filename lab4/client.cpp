@@ -3,9 +3,9 @@
 
 using boost::asio::ip::tcp;
 
-class ChatClient {
+class ElevatorClient {
 public:
-    ChatClient(boost::asio::io_context& ioContext, const tcp::resolver::results_type& endpoints)
+    ElevatorClient(boost::asio::io_context& ioContext, const tcp::resolver::results_type& endpoints)
         : socket_(ioContext)
     {
         boost::asio::async_connect(socket_, endpoints,
@@ -13,10 +13,7 @@ public:
             {
                 if (!ec)
                 {
-                    std::cout << "Connected to server" << std::endl;
-
-                    std::cout << "Enter your name: ";
-                    std::getline(std::cin, name_);
+                    std::cout << "Connected to Elevator server." << std::endl;
 
                     startRead();
                     startWrite();
@@ -28,13 +25,11 @@ public:
 
     void startWrite()
     {
-        /* std::cout << "> "; */
         std::string message;
         std::getline(std::cin, message);
+        message += '\n';
 
         {
-            message = decorateMessage(message);
-
             boost::asio::async_write(socket_, boost::asio::buffer(message),
                 [this](boost::system::error_code ec, std::size_t /*bytesTransferred*/)
                 {
@@ -44,12 +39,6 @@ public:
                     }
                 });
         }
-    }
-
-/* private: */
-    std::string decorateMessage(std::string message)
-    {
-        return "[" + name_ + "]: " + message + "\n";
     }
 
     void startRead()
@@ -63,7 +52,6 @@ public:
                     std::string message;
                     std::getline(stream, message);
 
-                    /* std::cout << "\r"; */
                     std::cout << message << std::endl;
 
                     startRead();
@@ -77,6 +65,10 @@ public:
     std::thread readThread_;
 };
 
+#include "doors.h"
+#include "writer.h"
+#include "timer.h"
+
 int main()
 {
     try
@@ -86,7 +78,58 @@ int main()
         tcp::resolver resolver(ioContext);
         tcp::resolver::results_type endpoints = resolver.resolve("localhost", "12345");
 
-        ChatClient client(ioContext, endpoints);
+        ElevatorClient client(ioContext, endpoints);
+
+        Writer writer(ioContext, endpoints);
+        Doors doors(ioContext, std::move(writer));
+
+        doors.open();
+
+        boost::asio::steady_timer timer(ioContext);
+
+        schedule_timer(timer, 1000, [&]() {
+            std::cout << std::to_string(doors.get_state()) << std::endl;
+
+            schedule_timer(timer, 1000, [&]() {
+                std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                schedule_timer(timer, 1000, [&]() {
+                    std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                    schedule_timer(timer, 1000, [&]() {
+                        std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                        schedule_timer(timer, 1000, [&]() {
+                            std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                            schedule_timer(timer, 1000, [&]() {
+                                std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                                schedule_timer(timer, 1000, [&]() {
+                                    std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                                    schedule_timer(timer, 1000, [&]() {
+                                        std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                                        schedule_timer(timer, 1000, [&]() {
+                                            std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                                            schedule_timer(timer, 1000, [&]() {
+                                                std::cout << std::to_string(doors.get_state()) << std::endl;
+
+                                                schedule_timer(timer, 1000, [&]() {
+                                                    std::cout << std::to_string(doors.get_state()) << std::endl;
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
         ioContext.run();
     }
