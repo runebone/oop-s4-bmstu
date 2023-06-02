@@ -14,35 +14,42 @@ public:
                 if (!ec)
                 {
                     std::cout << "Connected to server" << std::endl;
+
                     std::cout << "Enter your name: ";
                     std::getline(std::cin, name_);
-                    startWrite();
+
                     startRead();
+                    startWrite();
                 }
             });
-    }
 
-private:
-    std::string decorateMessage(std::string message)
-    {
-        return "[" + name_ + "]: " + message + "\n";
+        readThread_ = std::thread([this, &ioContext]() { ioContext.run(); });
     }
 
     void startWrite()
     {
+        /* std::cout << "> "; */
         std::string message;
         std::getline(std::cin, message);
 
-        message = decorateMessage(message);
+        {
+            message = decorateMessage(message);
 
-        boost::asio::async_write(socket_, boost::asio::buffer(message),
-            [this](boost::system::error_code ec, std::size_t /*bytesTransferred*/)
-            {
-                if (!ec)
+            boost::asio::async_write(socket_, boost::asio::buffer(message),
+                [this](boost::system::error_code ec, std::size_t /*bytesTransferred*/)
                 {
-                    startWrite();
-                }
-            });
+                    if (!ec)
+                    {
+                        startWrite();
+                    }
+                });
+        }
+    }
+
+/* private: */
+    std::string decorateMessage(std::string message)
+    {
+        return "[" + name_ + "]: " + message + "\n";
     }
 
     void startRead()
@@ -56,7 +63,8 @@ private:
                     std::string message;
                     std::getline(stream, message);
 
-                    std::cout << "Received message: " << message << std::endl;
+                    /* std::cout << "\r"; */
+                    std::cout << message << std::endl;
 
                     startRead();
                 }
@@ -66,6 +74,7 @@ private:
     std::string name_;
     tcp::socket socket_;
     boost::asio::streambuf inputBuffer_;
+    std::thread readThread_;
 };
 
 int main()

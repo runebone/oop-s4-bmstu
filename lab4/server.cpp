@@ -1,15 +1,29 @@
 #include <iostream>
 #include <boost/asio.hpp>
+#include <list>
 
 using boost::asio::ip::tcp;
 
 class ChatSession : public std::enable_shared_from_this<ChatSession> {
 public:
-    ChatSession(tcp::socket socket) : socket_(std::move(socket)) {}
+    ChatSession(tcp::socket socket, std::list<std::shared_ptr<ChatSession>>& clients)
+        : socket_(std::move(socket)), clients_(clients) {}
 
     void start()
     {
+        clients_.push_back(shared_from_this());
+
         doRead();
+    }
+
+    void broadcast(const std::string& message)
+    {
+        for (const auto& client: clients_)
+        {
+            if (client != shared_from_this())
+                boost::asio::async_write(client->socket_, boost::asio::buffer(message),
+                    [](boost::system::error_code /*ec*/, std::size_t /*bytesTransferred*/) {});
+        }
     }
 
 private:
@@ -27,6 +41,9 @@ private:
 
                     std::cout << message << std::endl;
 
+                    message += '\n';
+                    broadcast(message);
+
                     doRead();
                 }
             });
@@ -34,6 +51,7 @@ private:
 
     tcp::socket socket_;
     boost::asio::streambuf inputBuffer_;
+    std::list<std::shared_ptr<ChatSession>>& clients_;
 };
 
 class ChatServer {
@@ -54,7 +72,7 @@ private:
                 {
                     std::cout << "New client connected" << std::endl;
 
-                    std::shared_ptr<ChatSession> session = std::make_shared<ChatSession>(std::move(socket));
+                    std::shared_ptr<ChatSession> session = std::make_shared<ChatSession>(std::move(socket), clients_);
                     session->start();
                 }
 
@@ -63,6 +81,7 @@ private:
     }
 
     tcp::acceptor acceptor_;
+    std::list<std::shared_ptr<ChatSession>> clients_;
 };
 
 int main()
