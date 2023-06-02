@@ -6,12 +6,23 @@
 
 #include <string>
 #include <boost/asio.hpp>
+#include <functional>
 
 #include "writer.h"
 #include "timer.h"
 
+#define emit
+using Callback = std::function<void()>;
+
 class Doors
 {
+    enum TimerType
+    {
+        OpenTimer,
+        CloseTimer,
+        WaitTimer
+    };
+public:
     enum State
     {
         Closed,
@@ -20,9 +31,9 @@ class Doors
         Opening
     };
 
-public:
     Doors(boost::asio::io_context &ioContext) : Doors(ioContext, Writer()) {}
-    Doors(boost::asio::io_context &ioContext, Writer &&writer)
+    Doors(boost::asio::io_context &ioContext, Writer &&writer) : Doors(ioContext, writer) {}
+    Doors(boost::asio::io_context &ioContext, Writer &writer)
         : m_writer(writer),
             m_context(ioContext),
             m_openTimer(ioContext),
@@ -44,12 +55,19 @@ public:
             case Closed:
                 write("Двери открываются...");
                 update(Opening);
-                schedule_timer(m_closeTimer, DOORS_OPEN, [this]() {
+                schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
                     write("Двери открылись.");
                     update(Opened);
                     wait();
                 });
                 break;
+            case Opened:
+                write("Время ожидания сброшено (отсчёт заново).");
+                reset_timer(WaitTimer, [this]() {
+                    // FIXME: DRY
+                    write("Время ожидания вышло.");
+                    close();
+                });
             default:
                 write("Неверное действие: Двери нельзя открыть в текущем состоянии.");
                 break;
@@ -78,6 +96,17 @@ public:
         }
     }
 
+    void set_on_closed_callback(Callback callback)
+    {
+        doors_closed_signal = callback;
+    }
+
+    void set_on_opened_callback(Callback callback)
+    {
+        doors_opened_signal = callback;
+    }
+
+private:
     void wait()
     {
         switch (m_state)
@@ -96,7 +125,31 @@ public:
         }
     }
 
-private:
+    void reset_timer(TimerType timer, Callback callback)
+    {
+        switch (timer)
+        {
+            case OpenTimer:
+                m_openTimer.cancel();
+                schedule_timer(m_openTimer, DOORS_OPEN, [callback]() {
+                    callback();
+                });
+                break;
+            case CloseTimer:
+                m_closeTimer.cancel();
+                schedule_timer(m_closeTimer, DOORS_CLOSE, [callback]() {
+                    callback();
+                });
+                break;
+            case WaitTimer:
+                m_waitTimer.cancel();
+                schedule_timer(m_waitTimer, DOORS_WAIT, [callback]() {
+                    callback();
+                });
+                break;
+        }
+    }
+
     void cancel_timers()
     {
         m_openTimer.cancel();
@@ -107,19 +160,31 @@ private:
     void update(State state)
     {
         m_state = state;
+
+        switch (state)
+        {
+            case Closed:
+                emit doors_closed_signal();
+            case Opened:
+                emit doors_opened_signal();
+            default:
+                break;
+        }
     }
 
     void write(std::string message)
     {
+        message = "Двери: " + message;
         m_writer.write(message);
     }
 
     State m_state = Closed;
-
     Writer &m_writer;
     boost::asio::io_context &m_context;
-
     boost::asio::steady_timer m_openTimer;
     boost::asio::steady_timer m_closeTimer;
     boost::asio::steady_timer m_waitTimer;
+
+    Callback doors_closed_signal = [](){};
+    Callback doors_opened_signal = [](){};
 };
