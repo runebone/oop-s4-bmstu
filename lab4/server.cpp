@@ -1,7 +1,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <list>
-/* #include <functional> */
 
 #include "doors.h"
 
