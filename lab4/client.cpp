@@ -65,10 +65,6 @@ public:
     std::thread readThread_;
 };
 
-#include "doors.h"
-#include "writer.h"
-#include "timer.h"
-
 int main()
 {
     try
