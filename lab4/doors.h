@@ -21,6 +21,7 @@ class Doors
     };
 
 public:
+    Doors(boost::asio::io_context &ioContext) : Doors(ioContext, Writer()) {}
     Doors(boost::asio::io_context &ioContext, Writer &&writer)
         : m_writer(writer),
             m_context(ioContext),

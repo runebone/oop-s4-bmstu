@@ -80,57 +80,6 @@ int main()
 
         ElevatorClient client(ioContext, endpoints);
 
-        Writer writer(ioContext, endpoints);
-        Doors doors(ioContext, std::move(writer));
-
-        doors.open();
-
-        boost::asio::steady_timer timer(ioContext);
-
-        schedule_timer(timer, 1000, [&]() {
-            std::cout << std::to_string(doors.get_state()) << std::endl;
-
-            schedule_timer(timer, 1000, [&]() {
-                std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                schedule_timer(timer, 1000, [&]() {
-                    std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                    schedule_timer(timer, 1000, [&]() {
-                        std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                        schedule_timer(timer, 1000, [&]() {
-                            std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                            schedule_timer(timer, 1000, [&]() {
-                                std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                                schedule_timer(timer, 1000, [&]() {
-                                    std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                                    schedule_timer(timer, 1000, [&]() {
-                                        std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                                        schedule_timer(timer, 1000, [&]() {
-                                            std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                                            schedule_timer(timer, 1000, [&]() {
-                                                std::cout << std::to_string(doors.get_state()) << std::endl;
-
-                                                schedule_timer(timer, 1000, [&]() {
-                                                    std::cout << std::to_string(doors.get_state()) << std::endl;
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-
         ioContext.run();
     }
     catch (const std::exception& e)

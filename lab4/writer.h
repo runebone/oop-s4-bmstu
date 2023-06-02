@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <boost/asio.hpp>
 
@@ -8,7 +9,15 @@ using boost::asio::ip::tcp;
 class Writer
 {
 public:
-    Writer(boost::asio::io_context& ioContext, const tcp::resolver::results_type& endpoints)
+    Writer() = default;
+
+    void write(std::string message) { std::cout << message << std::endl; };
+};
+
+class TCPWriter
+{
+public:
+    TCPWriter(boost::asio::io_context& ioContext, const tcp::resolver::results_type& endpoints)
         : m_socket(ioContext)
     {
         boost::asio::async_connect(m_socket, endpoints,
@@ -20,7 +29,8 @@ public:
         message += '\n'; // XXX
         boost::asio::async_write(m_socket, boost::asio::buffer(message),
                 [this](boost::system::error_code ec,
-                    std::size_t /*bytesTransferred*/) {});
+                    std::size_t /*bytesTransferred*/) {
+                });
     }
 
 private:

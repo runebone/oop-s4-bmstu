@@ -1,13 +1,16 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <list>
+/* #include <functional> */
+
+#include "doors.h"
 
 using boost::asio::ip::tcp;
 
 class ElevatorSession : public std::enable_shared_from_this<ElevatorSession> {
 public:
-    ElevatorSession(tcp::socket socket, std::list<std::shared_ptr<ElevatorSession>>& clients)
-        : socket_(std::move(socket)), clients_(clients) {}
+    ElevatorSession(tcp::socket socket, std::list<std::shared_ptr<ElevatorSession>>& clients, std::shared_ptr<Doors> doors)
+        : socket_(std::move(socket)), clients_(clients), m_doors(doors) {}
 
     void start()
     {
@@ -39,7 +42,16 @@ private:
                     std::string message;
                     std::getline(stream, message);
 
-                    std::cout << message << std::endl;
+                    /* std::cout << message << std::endl; */
+
+                    if (message == "o")
+                    {
+                        m_doors->open();
+                    }
+                    else if (message == "c")
+                    {
+                        m_doors->close();
+                    }
 
                     /* message += '\n'; */
                     /* broadcast(message); */
@@ -62,6 +74,7 @@ private:
     tcp::socket socket_;
     boost::asio::streambuf inputBuffer_;
     std::list<std::shared_ptr<ElevatorSession>>& clients_;
+    std::shared_ptr<Doors> m_doors;
 };
 
 class ElevatorServer {
@@ -69,6 +82,8 @@ public:
     ElevatorServer(boost::asio::io_context& ioContext, short port)
         : acceptor_(ioContext, tcp::endpoint(tcp::v4(), port))
     {
+        m_doors = std::make_shared<Doors>(ioContext);
+
         startAccept();
     }
 
@@ -82,7 +97,7 @@ private:
                 {
                     std::cout << "New client connected." << std::endl;
 
-                    std::shared_ptr<ElevatorSession> session = std::make_shared<ElevatorSession>(std::move(socket), clients_);
+                    std::shared_ptr<ElevatorSession> session = std::make_shared<ElevatorSession>(std::move(socket), clients_, m_doors);
                     session->start();
                 }
 
@@ -92,6 +107,7 @@ private:
 
     tcp::acceptor acceptor_;
     std::list<std::shared_ptr<ElevatorSession>> clients_;
+    std::shared_ptr<Doors> m_doors;
 };
 
 int main()
