@@ -46,6 +46,16 @@ private:
 
                     doRead();
                 }
+                else if (ec == boost::asio::error::eof || ec == boost::asio::error::connection_reset)
+                {
+                    std::cerr << "Client disconnected" << std::endl;
+                    clients_.remove(shared_from_this()); // Remove this session from the list of clients
+                }
+                else
+                {
+                    std::cerr << "Error reading from client: " << ec.message() << std::endl;
+                    clients_.remove(shared_from_this()); // Remove this session from the list of clients
+                }
             });
     }
 
