@@ -57,8 +57,6 @@ public:
         switch (m_state)
         {
             case Idling:
-                write("Двери уже закрыты. Игнорируем запрос.");
-                break;
             case Waiting:
                 m_doors.close();
                 break;
@@ -71,25 +69,35 @@ public:
 
     void move_up()
     {
+        bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
         switch (m_state)
         {
             case Idling:
-                write("Кабина начала движение вверх.");
-                update(MovingUp);
-                schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                    write("Кабина поднялась на этаж выше.");
-                    emit cabin_moved_up_signal();
-                });
+                if (!doors_are_closed)
+                {
+                    write("Кабина не может начать движение вверх с открытыми дверями.");
+                }
+                else
+                {
+                    write("Кабина начала движение вверх.");
+                    update(MovingUp);
+                    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                            write("Кабина поднялась на этаж выше.");
+                            emit cabin_moved_up_signal();
+                            update(Idling); // XXX
+                            });
+                }
                 break;
             case Waiting:
                 write("Кабина ожидает. Пока нельзя начать движение вверх.");
                 break;
             case MovingUp:
-                schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                    // FIXME: DRY
-                    write("Кабина поднялась на этаж выше.");
-                    emit cabin_moved_up_signal();
-                });
+                /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
+                /*     // FIXME: DRY */
+                /*     write("Кабина поднялась на этаж выше."); */
+                /*     emit cabin_moved_up_signal(); */
+                /* }); */
                 break;
             case MovingDown:
                 write("Кабина не может изменить направление своего движения во время движения.");
@@ -99,29 +107,39 @@ public:
 
     void move_down()
     {
-        switch (m_state)
+        bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
+        if (!doors_are_closed)
         {
-            case Idling:
-                write("Кабина начала движение вниз.");
-                update(MovingDown);
-                schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                    write("Кабина опустилась на этаж ниже.");
-                    emit cabin_moved_down_signal();
-                });
-                break;
-            case Waiting:
-                write("Кабина ожидает. Пока нельзя начать движение вниз.");
-                break;
-            case MovingUp:
-                write("Кабина не может изменить направление своего движения во время движения.");
-                break;
-            case MovingDown:
-                schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                    // FIXME: DRY
-                    write("Кабина опустилась на этаж ниже.");
-                    emit cabin_moved_down_signal();
-                });
-                break;
+            write("Кабина не может начать движение вниз с открытыми дверями.");
+        }
+        else
+        {
+            switch (m_state)
+            {
+                case Idling:
+                    write("Кабина начала движение вниз.");
+                    update(MovingDown);
+                    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                            write("Кабина опустилась на этаж ниже.");
+                            emit cabin_moved_down_signal();
+                            update(Idling); // XXX
+                            });
+                    break;
+                case Waiting:
+                    write("Кабина ожидает. Пока нельзя начать движение вниз.");
+                    break;
+                case MovingUp:
+                    write("Кабина не может изменить направление своего движения во время движения.");
+                    break;
+                case MovingDown:
+                    /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
+                    /*         // FIXME: DRY */
+                    /*         write("Кабина опустилась на этаж ниже."); */
+                    /*         emit cabin_moved_down_signal(); */
+                    /*         }); */
+                    break;
+            }
         }
     }
 
@@ -155,6 +173,27 @@ public:
 
     State get_state() { return m_state; }
 
+    void print_state()
+    {
+        switch (m_state)
+        {
+            case Idling:
+                write("Состояние: Простаивает.");
+                break;
+            case Waiting:
+                write("Состояние: Ожидает.");
+                break;
+            case MovingUp:
+                write("Состояние: Движется вверх.");
+                break;
+            case MovingDown:
+                write("Состояние: Движется вниз.");
+                break;
+        }
+
+        m_doors.print_state();
+    }
+
     Doors::State get_doors_state() { return m_doors.get_state(); }
 
     void set_on_cabin_moved_up_callback(Callback callback)
@@ -186,7 +225,9 @@ private:
     }
 
     State m_state = Idling;
+public:
     Doors m_doors;
+private:
     Writer &m_writer;
     boost::asio::io_context &m_context;
     boost::asio::steady_timer m_moveTimer;
