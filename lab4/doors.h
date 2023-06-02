@@ -44,6 +44,25 @@ public:
 
     State get_state() { return m_state; }
 
+    void print_state()
+    {
+        switch (m_state)
+        {
+            case Closing:
+                write("Состояние: Закрываются.");
+                break;
+            case Closed:
+                write("Состояние: Закрыты.");
+                break;
+            case Opening:
+                write("Состояние: Открываются.");
+                break;
+            case Opened:
+                write("Состояние: Открыты.");
+                break;
+        }
+    }
+
     void open()
     {
         switch (m_state)
@@ -165,8 +184,10 @@ private:
         {
             case Closed:
                 emit doors_closed_signal();
+                break;
             case Opened:
                 emit doors_opened_signal();
+                break;
             default:
                 break;
         }
@@ -174,7 +195,7 @@ private:
 
     void write(std::string message)
     {
-        message = "Двери: " + message;
+        message = "Двери : " + message;
         m_writer.write(message);
     }
 
