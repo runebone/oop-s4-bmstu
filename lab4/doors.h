@@ -81,14 +81,15 @@ public:
                 });
                 break;
             case Opened:
-                write("Время ожидания сброшено (отсчёт заново).");
+                write("Удержание.");
                 reset_timer(WaitTimer, [this]() {
                     // FIXME: DRY
                     write("Время ожидания вышло.");
                     close();
                 });
+                break;
             default:
-                write("Неверное действие: Двери нельзя открыть в текущем состоянии.");
+                write("Двери и так уже открываются.");
                 break;
         }
     }
@@ -99,9 +100,9 @@ public:
         {
             case Opening:
                 write("Таймеры сброшены.");
-                cancel_timers();
                 // no break
             case Opened:
+                cancel_timers();
                 write("Двери закрываются...");
                 update(Closing);
                 schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
@@ -109,8 +110,11 @@ public:
                     update(Closed);
                 });
                 break;
+            case Closing:
+                write("Двери и так уже закрываются.");
+                break;
             default:
-                write("Неверное действие: Двери нельзя закрыть в текущем состоянии.");
+                write("Двери уже закрыты.");
                 break;
         }
     }
