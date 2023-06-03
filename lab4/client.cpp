@@ -3,6 +3,11 @@
 
 using boost::asio::ip::tcp;
 
+namespace Color {
+    const std::string Blue = "\033[34m";
+    const std::string Reset = "\033[0m";
+}
+
 class ElevatorClient {
 public:
     ElevatorClient(boost::asio::io_context& ioContext, const tcp::resolver::results_type& endpoints)
@@ -14,6 +19,15 @@ public:
                 if (!ec)
                 {
                     std::cout << "Connected to Elevator server." << std::endl;
+
+                    std::cout << std::endl << "Управление лифтом:" << std::endl;
+                    std::cout << Color::Blue << "f{N}" << Color::Reset << " - Нажать кнопку вызова лифта на N этаже (1 <= N <= 12)" << std::endl;
+                    std::cout << Color::Blue << "c{N}" << Color::Reset << " - Нажать кнопку N этажа в кабине лифта (Пример: c4)" << std::endl;
+                    std::cout << Color::Blue << " p  " << Color::Reset << " - Вывести текущее состояние лифта" << std::endl;
+                    std::cout << Color::Blue << "q/r " << Color::Reset << " - Нажать на кнопку отмены в лифте" << std::endl;
+                    std::cout << Color::Blue << " o  " << Color::Reset << " - Нажать на кнопку открытия дверей" << std::endl;
+                    std::cout << Color::Blue << " o  " << Color::Reset << " - Нажать на кнопку закрытия дверей" << std::endl;
+                    std::cout << std::endl;
 
                     startRead();
                     startWrite();
