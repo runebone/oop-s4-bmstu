@@ -125,6 +125,16 @@ public:
         doors_opened_signal = callback;
     }
 
+    void execute_on_closed_callback()
+    {
+        emit doors_closed_signal();
+    }
+
+    void execute_on_opened_callback()
+    {
+        emit doors_opened_signal();
+    }
+
 private:
     void wait()
     {

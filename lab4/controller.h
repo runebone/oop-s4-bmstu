@@ -30,53 +30,134 @@ public:
         m_cabin.set_on_cabin_moved_up_callback([this](){
                 inc_current_floor();
 
-                if (!is_goal_floor_reached())
+                if (!is_goal_floor_reached() && goal_exist())
                     m_cabin.move_up();
-                else
+                else if (goal_exist())
                     m_cabin.stop();
+                else
+                {
+                    update(Idling);
+                    m_cabin.set_idling();
+                }
             });
 
         m_cabin.set_on_cabin_moved_down_callback([this](){
                 dec_current_floor();
 
-                if (!is_goal_floor_reached())
+                if (!is_goal_floor_reached() && goal_exist())
                     m_cabin.move_down();
-                else
+                else if (goal_exist())
                     m_cabin.stop();
+                else
+                {
+                    update(Idling);
+                    m_cabin.set_idling();
+                }
             });
 
+        // Goal is reached
         m_cabin.set_on_cabin_stopped_callback([this](){
+                deactivate_floor_button(m_cur_floor);
+                deactivate_cabin_button(m_cur_floor);
+
                 m_cabin.open_doors();
+            });
+
+        m_cabin.m_doors.set_on_closed_callback([this](){
+                /* m_cabin.m_doors.execute_on_closed_callback(); */
+                m_cabin.set_idling();
+                go_for_the_next_goal();
             });
     }
 
     void activate_floor_button(int button_number)
     {
+        std::string s;
+
         if (button_number < 1 || button_number > NUMBER_OF_FLOORS)
         {
-            std::string s;
             s = "Неверный этаж. (Доступно 1-" + std::to_string(NUMBER_OF_FLOORS) + ")";
             write(s);
+            return;
         }
 
         m_floor_btns |= (int)(std::pow(2, button_number - 1));
+
+        s = "Кнопка " + std::to_string(button_number) + " этажа активирована (на этаже)";
+        write(s);
 
         update_current_goal();
     }
 
     void activate_cabin_button(int button_number)
     {
+        std::string s;
         // XXX: DRY
         if (button_number < 1 || button_number > NUMBER_OF_FLOORS)
         {
-            std::string s;
             s = "Неверный этаж. (Доступно 1-" + std::to_string(NUMBER_OF_FLOORS) + ")";
             write(s);
+            return;
         }
 
         m_cabin_btns |= (int)(std::pow(2, button_number - 1));
 
+        s = "Кнопка " + std::to_string(button_number) + " этажа активирована (в кабине)";
+        write(s);
+
         update_current_goal();
+    }
+
+    // XXX
+    void deactivate_floor_button(int button_number)
+    {
+        std::string s;
+
+        if (button_number < 1 || button_number > NUMBER_OF_FLOORS)
+        {
+            s = "Неверный этаж. (Доступно 1-" + std::to_string(NUMBER_OF_FLOORS) + ")";
+            write(s);
+            return;
+        }
+
+        int bin_button = (int)(std::pow(2, button_number - 1));
+
+        // If button is active, deactivate it
+        if (m_floor_btns & bin_button)
+        {
+            m_floor_btns ^= bin_button;
+
+            s = "Кнопка " + std::to_string(button_number) + " этажа деактивирована (на этаже)";
+            write(s);
+
+            update_current_goal();
+        }
+    }
+
+    // XXX
+    void deactivate_cabin_button(int button_number)
+    {
+        std::string s;
+
+        if (button_number < 1 || button_number > NUMBER_OF_FLOORS)
+        {
+            s = "Неверный этаж. (Доступно 1-" + std::to_string(NUMBER_OF_FLOORS) + ")";
+            write(s);
+            return;
+        }
+
+        int bin_button = (int)(std::pow(2, button_number - 1));
+
+        // If button is active, deactivate it
+        if (m_cabin_btns & bin_button)
+        {
+            m_cabin_btns ^= bin_button;
+
+            s = "Кнопка " + std::to_string(button_number) + " этажа деактивирована (в кабине)";
+            write(s);
+
+            update_current_goal();
+        }
     }
 
     void cancel_cabin_buttons()
@@ -87,6 +168,51 @@ public:
         update_current_goal();
     }
 
+    State get_state() { return m_state; }
+
+    void print_state()
+    {
+        switch (m_state)
+        {
+            case Idling:
+                write("Состояние: Простаивает.");
+                break;
+            case Updating:
+                write("Состояние: Обновляет цель.");
+                break;
+            case Serving:
+                write("Состояние: Обслуживает.");
+                break;
+        }
+
+        std::bitset<NUMBER_OF_FLOORS> floor_btns(m_floor_btns);
+        std::bitset<NUMBER_OF_FLOORS> cabin_btns(m_cabin_btns);
+
+        std::string s;
+
+        s = "Кнопки на этажах: " + floor_btns.to_string();
+        write(s);
+
+        s = "Кнопки в кабине : " + cabin_btns.to_string();
+        write(s);
+
+        s = "Текущий этаж: " + std::to_string(m_cur_floor);
+        write(s);
+
+        std::string goal;
+
+        if (m_cur_goal)
+            goal = std::to_string(m_cur_goal);
+        else
+            goal = "Отсутствует.";
+
+        s = "Целевой этаж: " + goal;
+        write(s);
+
+        m_cabin.print_state();
+    }
+
+private:
     void inc_current_floor()
     {
         m_cur_floor += 1;
@@ -97,8 +223,32 @@ public:
         m_cur_floor -= 1;
     }
 
+    void go_for_the_next_goal()
+    {
+        if (m_cur_goal)
+        {
+            update(Serving);
+            if (m_cur_goal > m_cur_floor)
+                m_cabin.move_up();
+            else if (m_cur_goal < m_cur_floor)
+                m_cabin.move_down();
+            else
+            {
+                write("Произошло невозможное? Текущая цель совпадает с текущим этажом.");
+                m_cabin.stop();
+            }
+        }
+        else
+        {
+            update(Idling);
+        }
+    }
+
     void update_current_goal()
     {
+        auto prev_state = m_state;
+        update(Updating);
+
         Cabin::State cabin_state = m_cabin.get_state();
 
         bool is_moving = false;
@@ -130,6 +280,13 @@ public:
             m_cur_goal = next_goal;
             write(s);
         }
+
+        update(prev_state);
+
+        if (prev_state == Idling)
+        {
+            go_for_the_next_goal();
+        }
     }
 
     int calculate_next_goal_floor(int current_floor, int floor_btns_bin, int cabin_btns_bin, bool is_moving, bool up) {
@@ -150,6 +307,8 @@ public:
                 break;
             }
         }
+
+        /* std::cout << "DBG: next_floor_up = " << next_floor_up << "; next_floor_down = " << next_floor_down << std::endl; */
 
         // Take next floor on the way up/down if the elevator is moving
         if (is_moving)
@@ -174,10 +333,10 @@ public:
                 next_floor = next_floor_down;
             }
             // If no buttons are pressed, go down on the first floor
-            else if (current_floor != 1)
-            {
-                next_floor = 1;
-            }
+            /* else if (current_floor != 1) */
+            /* { */
+            /*     next_floor = 1; */
+            /* } */
             else
             {
                 next_floor = 0;
@@ -192,51 +351,11 @@ public:
         return m_cur_floor == m_cur_goal;
     }
 
-    State get_state() { return m_state; }
-
-    void print_state()
+    bool goal_exist()
     {
-        switch (m_state)
-        {
-            case Idling:
-                write("Состояние: Простаивает.");
-                break;
-            case Updating:
-                write("Состояние: Обновляет цель.");
-                break;
-            case Serving:
-                write("Состояние: Обслуживает.");
-                break;
-        }
-
-        std::bitset<NUMBER_OF_FLOORS> floor_btns(m_floor_btns);
-        std::bitset<NUMBER_OF_FLOORS> cabin_btns(m_cabin_btns);
-
-        std::string s;
-
-        s = "Кнопки на этажах: " + floor_btns.to_string();
-        write(s);
-
-        s = "Кнопки в кабине: " + cabin_btns.to_string();
-        write(s);
-
-        s = "Текущий этаж: " + std::to_string(m_cur_floor);
-        write(s);
-
-        std::string goal;
-
-        if (m_cur_goal)
-            goal = std::to_string(m_cur_goal);
-        else
-            goal = "Отсутствует.";
-
-        s = "Целевой этаж: " + goal;
-        write(s);
-
-        m_cabin.print_state();
+        return m_cur_goal != 0;
     }
 
-private:
     void update(State state)
     {
         m_state = state;

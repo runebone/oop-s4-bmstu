@@ -1,6 +1,6 @@
 #pragma once
 
-#define CABIN_MOVE_ONE_FLOOR 5000
+#define CABIN_MOVE_ONE_FLOOR 3000
 
 #include <string>
 #include <boost/asio.hpp>
@@ -35,6 +35,12 @@ public:
         m_doors.set_on_closed_callback([this](){
                 update(Idling);
             });
+    }
+
+    // XXX
+    void set_idling()
+    {
+        update(Idling);
     }
 
     void open_doors()
@@ -85,18 +91,18 @@ public:
                     schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
                             write("Кабина поднялась на этаж выше.");
                             emit cabin_moved_up_signal();
-                            update(Idling); // XXX
+                            /* update(Idling); // XXX */
                             });
                     break;
                 case Waiting:
                     write("Кабина ожидает. Пока нельзя начать движение вверх.");
                     break;
                 case MovingUp:
-                    /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
-                    /*     // FIXME: DRY */
-                    /*     write("Кабина поднялась на этаж выше."); */
-                    /*     emit cabin_moved_up_signal(); */
-                    /* }); */
+                    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                        // FIXME: DRY
+                        write("Кабина поднялась на этаж выше.");
+                        emit cabin_moved_up_signal();
+                    });
                     break;
                 case MovingDown:
                     write("Кабина не может изменить направление своего движения во время движения.");
@@ -123,7 +129,7 @@ public:
                     schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
                             write("Кабина опустилась на этаж ниже.");
                             emit cabin_moved_down_signal();
-                            update(Idling); // XXX
+                            /* update(Idling); // XXX */
                             });
                     break;
                 case Waiting:
@@ -133,11 +139,11 @@ public:
                     write("Кабина не может изменить направление своего движения во время движения.");
                     break;
                 case MovingDown:
-                    /* schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() { */
-                    /*         // FIXME: DRY */
-                    /*         write("Кабина опустилась на этаж ниже."); */
-                    /*         emit cabin_moved_down_signal(); */
-                    /*         }); */
+                    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                            // FIXME: DRY
+                            write("Кабина опустилась на этаж ниже.");
+                            emit cabin_moved_down_signal();
+                            });
                     break;
             }
         }
