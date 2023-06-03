@@ -57,10 +57,11 @@ public:
 
         // Goal is reached
         m_cabin.set_on_cabin_stopped_callback([this](){
-                deactivate_floor_button(m_cur_floor);
-                deactivate_cabin_button(m_cur_floor);
+                /* deactivate_floor_button(m_cur_floor); */
+                /* deactivate_cabin_button(m_cur_floor); */
 
-                m_cabin.open_doors();
+                /* m_cabin.open_doors(); */
+                on_cabin_stopped_callback();
             });
 
         m_cabin.m_doors.set_on_closed_callback([this](){
@@ -68,6 +69,14 @@ public:
                 m_cabin.set_idling();
                 go_for_the_next_goal();
             });
+    }
+
+    void on_cabin_stopped_callback()
+    {
+        deactivate_floor_button(m_cur_floor);
+        deactivate_cabin_button(m_cur_floor);
+
+        m_cabin.open_doors();
     }
 
     void activate_floor_button(int button_number)
@@ -234,8 +243,9 @@ private:
                 m_cabin.move_down();
             else
             {
-                write("Произошло невозможное? Текущая цель совпадает с текущим этажом.");
-                m_cabin.stop();
+                /* write("Произошло невозможное? Текущая цель совпадает с текущим этажом."); */
+                /* m_cabin.stop(); */
+                on_cabin_stopped_callback();
             }
         }
         else
@@ -308,8 +318,6 @@ private:
             }
         }
 
-        /* std::cout << "DBG: next_floor_up = " << next_floor_up << "; next_floor_down = " << next_floor_down << std::endl; */
-
         // Take next floor on the way up/down if the elevator is moving
         if (is_moving)
         {
@@ -339,7 +347,14 @@ private:
             /* } */
             else
             {
-                next_floor = 0;
+                if (floor_btns_bin & (1 << (current_floor - 1)) || cabin_btns_bin & (1 << (current_floor - 1)))
+                {
+                    next_floor = current_floor;
+                }
+                else
+                {
+                    next_floor = 0;
+                }
             }
         }
 
