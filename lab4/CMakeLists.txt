@@ -11,9 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 
 set(COMMON_SRC
     writer.h
-    doors.h
-    cabin.h
-    controller.h
+    doors.h doors.cpp
+    cabin.h cabin.cpp
+    controller.h controller.cpp
     )
 
 set(CLIENT_SRC
