@@ -28,6 +28,7 @@ void Doors::print_state()
     }
 }
 
+#if 0
 void Doors::open()
 {
     switch (m_state)
@@ -58,7 +59,9 @@ void Doors::open()
             break;
     }
 }
+#endif
 
+#if 0
 void Doors::close()
 {
     switch (m_state)
@@ -83,6 +86,88 @@ void Doors::close()
             break;
     }
 }
+#endif
+
+void Doors::make_opening()
+{
+    switch (m_state)
+    {
+        case Opening:
+            write("Двери и так уже открываются.");
+            break;
+        case Opened:
+            write("Двери уже открыты.");
+            break;
+        case Closing:
+            write("Таймеры сброшены.");
+            cancel_timers();
+            // no break
+        case Closed:
+            write("Двери открываются...");
+            update(Opening);
+            schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
+                make_opened();
+            });
+            break;
+    }
+}
+
+void Doors::make_opened()
+{
+    switch (m_state)
+    {
+        case Opening:
+            write("Двери открылись.");
+            update(Opened);
+            wait();
+            break;
+        case Opened:
+        case Closing:
+        case Closed:
+            break;
+    }
+}
+
+void Doors::make_closing()
+{
+    switch (m_state)
+    {
+        case Opening:
+            write("Таймеры сброшены.");
+            // no break
+            break;
+        case Opened:
+            cancel_timers();
+            write("Двери закрываются...");
+            update(Closing);
+            schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
+                make_closed();
+            });
+            break;
+        case Closing:
+            write("Двери и так уже закрываются.");
+            break;
+        case Closed:
+            write("Двери уже закрыты.");
+            break;
+    }
+}
+
+void Doors::make_closed()
+{
+    switch (m_state)
+    {
+        case Opening:
+        case Opened:
+            break;
+        case Closing:
+            write("Двери закрылись.");
+            update(Closed);
+            break;
+        case Closed:
+            break;
+    }
+}
 
 void Doors::set_on_closed_callback(Callback callback)
 {
@@ -102,7 +187,8 @@ void Doors::wait()
             write("Двери ожидают...");
             schedule_timer(m_waitTimer, DOORS_WAIT, [this]() {
                     write("Время ожидания вышло.");
-                    close();
+                    make_closing();
+                    /* close(); */
                     });
             break;
 
