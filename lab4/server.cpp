@@ -79,11 +79,11 @@ private:
                     }
                     else if (message == "c")
                     {
-                        m_controller->m_cabin.close_doors();
+                        m_controller->m_cabin->close_doors();
                     }
                     else if (message == "o")
                     {
-                        m_controller->m_cabin.open_doors();
+                        m_controller->m_cabin->open_doors();
                     }
 
                     /* message += '\n'; */

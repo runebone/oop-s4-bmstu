@@ -2,44 +2,46 @@
 
 Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
     : m_context(ioContext),
-    m_cabin(ioContext, writer),
+    /* m_cabin(ioContext, writer), */
     m_writer(writer)
 {
-    m_cabin.set_on_cabin_moved_up_callback([this](){
+    m_cabin = std::make_shared<Cabin>(ioContext, writer);
+
+    m_cabin->set_on_cabin_moved_up_callback([this](){
             inc_current_floor();
 
             if (!is_target_floor_reached() && target_exist())
-            m_cabin.move_up();
+            m_cabin->move_up();
             else if (target_exist())
-            m_cabin.stop();
+            m_cabin->stop();
             else
             {
             update(Idling);
-            m_cabin.set_idling();
+            m_cabin->set_idling();
             }
             });
 
-    m_cabin.set_on_cabin_moved_down_callback([this](){
+    m_cabin->set_on_cabin_moved_down_callback([this](){
             dec_current_floor();
 
             if (!is_target_floor_reached() && target_exist())
-            m_cabin.move_down();
+            m_cabin->move_down();
             else if (target_exist())
-            m_cabin.stop();
+            m_cabin->stop();
             else
             {
             update(Idling);
-            m_cabin.set_idling();
+            m_cabin->set_idling();
             }
             });
 
     // Goal is reached
-    m_cabin.set_on_cabin_stopped_callback([this](){
+    m_cabin->set_on_cabin_stopped_callback([this](){
             on_cabin_stopped_callback();
             });
 
-    m_cabin.m_doors.set_on_closed_callback([this](){
-            m_cabin.set_idling();
+    m_cabin->m_doors.set_on_closed_callback([this](){
+            m_cabin->set_idling();
             go_for_the_next_target();
             });
 }
@@ -49,7 +51,7 @@ void Controller::on_cabin_stopped_callback()
     deactivate_floor_button(m_cur_floor);
     deactivate_cabin_button(m_cur_floor);
 
-    m_cabin.open_doors();
+    m_cabin->open_doors();
 }
 
 void Controller::activate_floor_button(int button_number)
@@ -189,7 +191,7 @@ void Controller::print_state()
     s = "Целевой этаж: " + target;
     write(s);
 
-    m_cabin.print_state();
+    m_cabin->print_state();
 }
 
 void Controller::inc_current_floor()
@@ -208,9 +210,9 @@ void Controller::go_for_the_next_target()
     {
         update(Serving);
         if (m_cur_target > m_cur_floor)
-            m_cabin.move_up();
+            m_cabin->move_up();
         else if (m_cur_target < m_cur_floor)
-            m_cabin.move_down();
+            m_cabin->move_down();
         else
         {
             on_cabin_stopped_callback();
@@ -290,7 +292,7 @@ void Controller::update_current_target()
     auto prev_state = m_state;
     update(Updating);
 
-    Cabin::State cabin_state = m_cabin.get_state();
+    Cabin::State cabin_state = m_cabin->get_state();
 
     bool is_moving = false;
     bool up = false;
