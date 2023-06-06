@@ -7,11 +7,13 @@ Cabin::Cabin(boost::asio::io_context &ioContext, Writer &writer)
     m_moveTimer(ioContext)
 {
     m_doors.set_on_opened_callback([this](){
-            update(Waiting);
+            /* update(Waiting); */
+            make_waiting();
             });
 
     m_doors.set_on_closed_callback([this](){
-            update(Idling);
+            /* update(Idling); */
+            make_idling();
             });
 }
 
@@ -45,6 +47,7 @@ void Cabin::close_doors()
     }
 }
 
+#if 0
 void Cabin::move_up()
 {
     bool doors_are_closed = m_doors.get_state() == Doors::Closed;
@@ -82,7 +85,9 @@ void Cabin::move_up()
         }
     }
 }
+#endif
 
+#if 0
 void Cabin::move_down()
 {
     bool doors_are_closed = m_doors.get_state() == Doors::Closed;
@@ -120,6 +125,7 @@ void Cabin::move_down()
         }
     }
 }
+#endif
 
 void Cabin::stop()
 {
@@ -138,13 +144,76 @@ void Cabin::stop()
             if (stopped)
             {
                 write("Кабина остановилась.");
-                update(Idling);
+                /* update(Idling); */
+                make_idling();
                 emit cabin_stopped_signal();
             }
             else
             {
                 write("Кабина в движении, нельзя выполнить остановку.");
             }
+            break;
+    }
+}
+
+void Cabin::make_moving_up()
+{
+    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
+    if (!doors_are_closed)
+    {
+        write("Кабина не может начать движение вверх с открытыми дверями.");
+        return;
+    }
+
+    switch (m_state)
+    {
+        case Idling:
+            write("Кабина начала движение вверх.");
+            update(MovingUp);
+            // no break
+        case MovingUp:
+            schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                    write("Кабина поднялась на этаж выше.");
+                    emit cabin_moved_up_signal();
+                    });
+            break;
+        case Waiting:
+            write("Кабина ожидает. Пока нельзя начать движение вверх.");
+            break;
+        case MovingDown:
+            write("Кабина не может изменить направление своего движения во время движения.");
+            break;
+    }
+}
+
+void Cabin::make_moving_down()
+{
+    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
+    if (!doors_are_closed)
+    {
+        write("Кабина не может начать движение вниз с открытыми дверями.");
+        return;
+    }
+
+    switch (m_state)
+    {
+        case Idling:
+            write("Кабина начала движение вниз.");
+            update(MovingDown);
+            // no break
+        case MovingDown:
+            schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+                    write("Кабина опустилась на этаж ниже.");
+                    emit cabin_moved_down_signal();
+                    });
+            break;
+        case Waiting:
+            write("Кабина ожидает. Пока нельзя начать движение вниз.");
+            break;
+        case MovingUp:
+            write("Кабина не может изменить направление своего движения во время движения.");
             break;
     }
 }

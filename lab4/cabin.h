@@ -18,22 +18,26 @@ public:
     Cabin(boost::asio::io_context &ioContext, Writer &&writer) : Cabin(ioContext, writer) {}
     Cabin(boost::asio::io_context &ioContext, Writer &writer);
 
-    void open_doors();
-    void close_doors();
-    void move_up();
-    void move_down();
-    void stop();
+    PUBLIC_SLOT void open_doors();
+    PUBLIC_SLOT void close_doors();
+
+    PUBLIC_SLOT void move_up() { make_moving_up(); }
+    PUBLIC_SLOT void move_down() { make_moving_down(); }
+    PUBLIC_SLOT void stop(); // ~= make_idling();
 
     State get_state() { return m_state; }
     void print_state();
     Doors::State get_doors_state() { return m_doors.get_state(); }
 
 private:
+    PRIVATE_SLOT void make_idling() { update(Idling); }
+    PRIVATE_SLOT void make_waiting() { update(Waiting); }
+    PRIVATE_SLOT void make_moving_up();
+    PRIVATE_SLOT void make_moving_down();
+
     void set_on_cabin_moved_up_callback(Callback callback);
     void set_on_cabin_moved_down_callback(Callback callback);
     void set_on_cabin_stopped_callback(Callback callback);
-
-    void set_idling() { update(Idling); }
 
     void update(State state);
     void write(std::string message);
