@@ -19,18 +19,22 @@ public:
     Controller(boost::asio::io_context &ioContext, Writer &&writer) : Controller(ioContext, writer) {}
     Controller(boost::asio::io_context &ioContext, Writer &writer);
 
-    void activate_floor_button(int button_number);
-    void activate_cabin_button(int button_number);
+    PUBLIC_SLOT void activate_floor_button(int button_number); // Updating -> Serving -> Idling
+    PUBLIC_SLOT void activate_cabin_button(int button_number);
 
-    void deactivate_floor_button(int button_number);
-    void deactivate_cabin_button(int button_number);
+    PUBLIC_SLOT void deactivate_floor_button(int button_number);
+    PUBLIC_SLOT void deactivate_cabin_button(int button_number);
 
-    void cancel_cabin_buttons();
+    PUBLIC_SLOT void cancel_cabin_buttons();
 
     State get_state() { return m_state; }
     void print_state();
 
 private:
+    PRIVATE_SLOT void make_idling();
+    PRIVATE_SLOT void make_updating();
+    PRIVATE_SLOT void make_serving();
+
     void on_cabin_stopped_callback();
 
     void inc_current_floor();

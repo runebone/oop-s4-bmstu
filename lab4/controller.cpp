@@ -15,8 +15,9 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
                 m_cabin->stop();
             else
             {
-            update(Idling);
-            m_cabin->set_idling();
+                /* update(Idling); */
+                make_idling();
+                m_cabin->make_idling();
             }
             });
 
@@ -29,8 +30,9 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
                 m_cabin->stop();
             else
             {
-            update(Idling);
-            m_cabin->set_idling();
+                /* update(Idling); */
+                make_idling();
+                m_cabin->make_idling();
             }
             });
 
@@ -40,7 +42,7 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
             });
 
     m_cabin->m_doors.set_on_closed_callback([this](){
-            m_cabin->set_idling();
+            m_cabin->make_idling();
             go_for_the_next_target();
             });
 }
@@ -193,6 +195,21 @@ void Controller::print_state()
     m_cabin->print_state();
 }
 
+void Controller::make_idling()
+{
+    update(Idling);
+}
+
+void Controller::make_updating()
+{
+    update(Updating);
+}
+
+void Controller::make_serving()
+{
+    update(Serving);
+}
+
 void Controller::inc_current_floor()
 {
     m_cur_floor += 1;
@@ -207,7 +224,8 @@ void Controller::go_for_the_next_target()
 {
     if (m_cur_target)
     {
-        update(Serving);
+        /* update(Serving); */
+        make_serving();
         if (m_cur_target > m_cur_floor)
             m_cabin->move_up();
         else if (m_cur_target < m_cur_floor)
@@ -219,7 +237,8 @@ void Controller::go_for_the_next_target()
     }
     else
     {
-        update(Idling);
+        /* update(Idling); */
+        make_idling();
     }
 }
 
@@ -284,7 +303,8 @@ static int calculate_next_target_floor(int current_floor, int floor_btns_bin, in
 void Controller::update_current_target()
 {
     auto prev_state = m_state;
-    update(Updating);
+    /* update(Updating); */
+    make_updating();
 
     Cabin::State cabin_state = m_cabin->get_state();
 
