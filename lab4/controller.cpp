@@ -2,7 +2,6 @@
 
 Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
     : m_context(ioContext),
-    /* m_cabin(ioContext, writer), */
     m_writer(writer)
 {
     m_cabin = std::make_shared<Cabin>(ioContext, writer);
@@ -11,9 +10,9 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
             inc_current_floor();
 
             if (!is_target_floor_reached() && target_exist())
-            m_cabin->move_up();
+                m_cabin->move_up();
             else if (target_exist())
-            m_cabin->stop();
+                m_cabin->stop();
             else
             {
             update(Idling);
@@ -25,9 +24,9 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
             dec_current_floor();
 
             if (!is_target_floor_reached() && target_exist())
-            m_cabin->move_down();
+                m_cabin->move_down();
             else if (target_exist())
-            m_cabin->stop();
+                m_cabin->stop();
             else
             {
             update(Idling);
@@ -266,11 +265,6 @@ static int calculate_next_target_floor(int current_floor, int floor_btns_bin, in
         {
             next_floor = next_floor_down;
         }
-        // If no buttons are pressed, go down on the first floor
-        /* else if (current_floor != 1) */
-        /* { */
-        /*     next_floor = 1; */
-        /* } */
         else
         {
             if (floor_btns_bin & (1 << (current_floor - 1)) || cabin_btns_bin & (1 << (current_floor - 1)))

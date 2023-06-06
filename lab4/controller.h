@@ -48,7 +48,7 @@ private:
     State m_state = Idling;
 
 public:
-    std::shared_ptr<Cabin> m_cabin; // XXX (just to open/close doors directly)
+    std::shared_ptr<Cabin> m_cabin;
 
 private:
     Writer &m_writer;
