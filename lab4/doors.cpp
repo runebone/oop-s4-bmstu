@@ -35,9 +35,9 @@ void Doors::open()
     {
         case Closing:
             write("Таймеры сброшены.");
-            cancel_timers();
             // no break
         case Closed:
+            cancel_timers();
             write("Двери открываются...");
             update(Opening);
             schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
@@ -96,7 +96,12 @@ void Doors::make_opening()
             write("Двери и так уже открываются.");
             break;
         case Opened:
-            write("Двери уже открыты.");
+            write("Двери уже открыты (удержание).");
+            reset_timer(WaitTimer, [this]() {
+                write("Время ожидания вышло.");
+                make_closing();
+            });
+            break;
             break;
         case Closing:
             write("Таймеры сброшены.");
@@ -135,7 +140,6 @@ void Doors::make_closing()
         case Opening:
             write("Таймеры сброшены.");
             // no break
-            break;
         case Opened:
             cancel_timers();
             write("Двери закрываются...");
