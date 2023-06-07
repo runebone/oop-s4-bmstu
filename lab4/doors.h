@@ -29,8 +29,8 @@ public:
     Doors(boost::asio::io_context &ioContext, Writer &&writer) : Doors(ioContext, writer) {}
     Doors(boost::asio::io_context &ioContext, Writer &writer);
 
-    PUBLIC_SLOT void open() { make_opening(); }
-    PUBLIC_SLOT void close() { make_closing(); }
+    PUBLIC_SLOT void open();
+    PUBLIC_SLOT void close();
 
     State get_state() { return m_state; }
     void print_state();
@@ -45,6 +45,7 @@ private:
     void set_on_opened_callback(Callback callback);
 
     void wait();
+    void hold();
     void reset_timer(TimerType timer, Callback callback);
     void cancel_timers();
     void update(State state);

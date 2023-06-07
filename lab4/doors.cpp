@@ -88,7 +88,7 @@ void Doors::close()
 }
 #endif
 
-void Doors::make_opening()
+void Doors::open()
 {
     if (m_state == Opening)
     {
@@ -97,50 +97,27 @@ void Doors::make_opening()
     else if (m_state == Opened)
     {
         write("Двери уже открыты (удержание).");
-        reset_timer(WaitTimer, [this]() {
-                write("Время ожидания вышло.");
-                make_closing();
-                });
+        hold();
     }
     else if (m_state == Closing || m_state == Closed)
     {
-        if (m_state == Closing)
-            write("Таймеры сброшены.");
-
-        cancel_timers();
-        write("Двери открываются...");
-        update(Opening);
-
-        schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
-                make_opened();
-                });
+        make_opening();
     }
 }
 
-void Doors::make_opened()
+void Doors::hold()
 {
-    if (m_state == Opening)
-    {
-        write("Двери открылись.");
-        update(Opened);
-        wait();
-    }
+    reset_timer(WaitTimer, [this]() {
+            write("Время ожидания вышло.");
+            make_closing();
+            });
 }
 
-void Doors::make_closing()
+void Doors::close()
 {
     if (m_state == Opening || m_state == Opened)
     {
-        if (m_state == Opening)
-            write("Таймеры сброшены.");
-
-        cancel_timers();
-        write("Двери закрываются...");
-        update(Closing);
-
-        schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
-                make_closed();
-                });
+        make_opening();
     }
     else if (m_state == Closing)
     {
@@ -152,13 +129,45 @@ void Doors::make_closing()
     }
 }
 
-void Doors::make_closed()
+void Doors::make_opening()
 {
     if (m_state == Closing)
-    {
-        write("Двери закрылись.");
-        update(Closed);
-    }
+        write("Таймеры сброшены.");
+
+    cancel_timers();
+    write("Двери открываются...");
+    update(Opening);
+
+    schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
+            write("Двери открылись.");
+            make_opened();
+            });
+}
+
+void Doors::make_opened()
+{
+    update(Opened);
+    wait();
+}
+
+void Doors::make_closing()
+{
+    if (m_state == Opening)
+        write("Таймеры сброшены.");
+
+    cancel_timers();
+    write("Двери закрываются...");
+    update(Closing);
+
+    schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
+            write("Двери закрылись.");
+            make_closed();
+            });
+}
+
+void Doors::make_closed()
+{
+    update(Closed);
 }
 
 void Doors::set_on_closed_callback(Callback callback)

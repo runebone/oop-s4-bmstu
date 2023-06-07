@@ -21,8 +21,8 @@ public:
     PUBLIC_SLOT void open_doors();
     PUBLIC_SLOT void close_doors();
 
-    PUBLIC_SLOT void move_up() { make_moving_up(); }
-    PUBLIC_SLOT void move_down() { make_moving_down(); }
+    PUBLIC_SLOT void move_up();
+    PUBLIC_SLOT void move_down();
     PUBLIC_SLOT void stop(); // ~= make_idling();
 
     State get_state() { return m_state; }

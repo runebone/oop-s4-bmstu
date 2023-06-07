@@ -7,12 +7,10 @@ Cabin::Cabin(boost::asio::io_context &ioContext, Writer &writer)
     m_moveTimer(ioContext)
 {
     m_doors.set_on_opened_callback([this](){
-            /* update(Waiting); */
             make_waiting();
             });
 
     m_doors.set_on_closed_callback([this](){
-            /* update(Idling); */
             make_idling();
             });
 }
@@ -121,6 +119,56 @@ void Cabin::move_down()
 }
 #endif
 
+void Cabin::move_up()
+{
+    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
+    if (!doors_are_closed)
+    {
+        write("Кабина не может начать движение вверх с открытыми дверями.");
+    }
+    else if (m_state == Idling || m_state == MovingUp)
+    {
+        if (m_state == Idling)
+            write("Кабина начала движение вверх.");
+
+        make_moving_up();
+    }
+    else if (m_state == Waiting)
+    {
+        write("Кабина ожидает. Пока нельзя начать движение вверх.");
+    }
+    else if (m_state == MovingDown)
+    {
+        write("Кабина не может изменить направление своего движения во время движения.");
+    }
+}
+
+void Cabin::move_down()
+{
+    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
+
+    if (!doors_are_closed)
+    {
+        write("Кабина не может начать движение вниз с открытыми дверями.");
+    }
+    else if (m_state == Idling || m_state == MovingDown)
+    {
+        if (m_state == Idling)
+            write("Кабина начала движение вниз.");
+
+        make_moving_down();
+    }
+    else if (m_state == Waiting)
+    {
+        write("Кабина ожидает. Пока нельзя начать движение вниз.");
+    }
+    else if (m_state == MovingUp)
+    {
+        write("Кабина не может изменить направление своего движения во время движения.");
+    }
+}
+
 void Cabin::stop()
 {
     bool stopped = m_moveTimer.expiry() <= boost::asio::steady_timer::clock_type::now();
@@ -151,64 +199,20 @@ void Cabin::stop()
 
 void Cabin::make_moving_up()
 {
-    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
-
-    if (!doors_are_closed)
-    {
-        write("Кабина не может начать движение вверх с открытыми дверями.");
-    }
-    else if (m_state == Idling || m_state == MovingUp)
-    {
-        if (m_state == Idling)
-        {
-            write("Кабина начала движение вверх.");
-            update(MovingUp);
-        }
-
-        schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                write("Кабина поднялась на этаж выше.");
-                emit cabin_moved_up_signal();
-                });
-    }
-    else if (m_state == Waiting)
-    {
-        write("Кабина ожидает. Пока нельзя начать движение вверх.");
-    }
-    else if (m_state == MovingDown)
-    {
-        write("Кабина не может изменить направление своего движения во время движения.");
-    }
+    update(MovingUp);
+    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+            write("Кабина поднялась на этаж выше.");
+            emit cabin_moved_up_signal();
+            });
 }
 
 void Cabin::make_moving_down()
 {
-    bool doors_are_closed = m_doors.get_state() == Doors::Closed;
-
-    if (!doors_are_closed)
-    {
-        write("Кабина не может начать движение вниз с открытыми дверями.");
-    }
-    else if (m_state == Idling || m_state == MovingDown)
-    {
-        if (m_state == Idling)
-        {
-            write("Кабина начала движение вниз.");
-            update(MovingDown);
-        }
-
-        schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
-                write("Кабина опустилась на этаж ниже.");
-                emit cabin_moved_down_signal();
-                });
-    }
-    else if (m_state == Waiting)
-    {
-        write("Кабина ожидает. Пока нельзя начать движение вниз.");
-    }
-    else if (m_state == MovingUp)
-    {
-        write("Кабина не может изменить направление своего движения во время движения.");
-    }
+    update(MovingDown);
+    schedule_timer(m_moveTimer, CABIN_MOVE_ONE_FLOOR, [this]() {
+            write("Кабина опустилась на этаж ниже.");
+            emit cabin_moved_down_signal();
+            });
 }
 
 void Cabin::print_state()
