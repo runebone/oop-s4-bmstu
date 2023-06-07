@@ -15,7 +15,6 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
                 m_cabin->stop();
             else
             {
-                /* update(Idling); */
                 make_idling();
                 m_cabin->make_idling();
             }
@@ -30,13 +29,11 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
                 m_cabin->stop();
             else
             {
-                /* update(Idling); */
                 make_idling();
                 m_cabin->make_idling();
             }
             });
 
-    // Goal is reached
     m_cabin->set_on_cabin_stopped_callback([this](){
             on_cabin_stopped_callback();
             });
@@ -224,7 +221,6 @@ void Controller::go_for_the_next_target()
 {
     if (m_cur_target)
     {
-        /* update(Serving); */
         make_serving();
         if (m_cur_target > m_cur_floor)
             m_cabin->move_up();
@@ -237,7 +233,6 @@ void Controller::go_for_the_next_target()
     }
     else
     {
-        /* update(Idling); */
         make_idling();
     }
 }
@@ -303,7 +298,6 @@ static int calculate_next_target_floor(int current_floor, int floor_btns_bin, in
 void Controller::update_current_target()
 {
     auto prev_state = m_state;
-    /* update(Updating); */
     make_updating();
 
     Cabin::State cabin_state = m_cabin->get_state();
@@ -311,22 +305,22 @@ void Controller::update_current_target()
     bool is_moving = false;
     bool up = false;
 
-    switch (cabin_state)
+    if (cabin_state == Cabin::Idling || cabin_state == Cabin::Waiting)
     {
-        case Cabin::Idling:
-            is_moving = false;
-            break;
-        case Cabin::Waiting:
-            is_moving = false;
-            break;
-        case Cabin::MovingUp:
-            is_moving = true;
+        is_moving = false;
+    }
+    else if (cabin_state == Cabin::MovingUp || cabin_state == Cabin::MovingDown)
+    {
+        is_moving = true;
+
+        if (cabin_state == Cabin::MovingUp)
+        {
             up = true;
-            break;
-        case Cabin::MovingDown:
-            is_moving = false;
+        }
+        else
+        {
             up = false;
-            break;
+        }
     }
 
     int next_target = calculate_next_target_floor(m_cur_floor, m_floor_btns, m_cabin_btns, is_moving, up);

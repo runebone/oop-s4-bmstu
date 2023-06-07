@@ -90,86 +90,74 @@ void Doors::close()
 
 void Doors::make_opening()
 {
-    switch (m_state)
+    if (m_state == Opening)
     {
-        case Opening:
-            write("Двери и так уже открываются.");
-            break;
-        case Opened:
-            write("Двери уже открыты (удержание).");
-            reset_timer(WaitTimer, [this]() {
+        write("Двери и так уже открываются.");
+    }
+    else if (m_state == Opened)
+    {
+        write("Двери уже открыты (удержание).");
+        reset_timer(WaitTimer, [this]() {
                 write("Время ожидания вышло.");
                 make_closing();
-            });
-            break;
-            break;
-        case Closing:
+                });
+    }
+    else if (m_state == Closing || m_state == Closed)
+    {
+        if (m_state == Closing)
             write("Таймеры сброшены.");
-            cancel_timers();
-            // no break
-        case Closed:
-            write("Двери открываются...");
-            update(Opening);
-            schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
+
+        cancel_timers();
+        write("Двери открываются...");
+        update(Opening);
+
+        schedule_timer(m_openTimer, DOORS_OPEN, [this]() {
                 make_opened();
-            });
-            break;
+                });
     }
 }
 
 void Doors::make_opened()
 {
-    switch (m_state)
+    if (m_state == Opening)
     {
-        case Opening:
-            write("Двери открылись.");
-            update(Opened);
-            wait();
-            break;
-        case Opened:
-        case Closing:
-        case Closed:
-            break;
+        write("Двери открылись.");
+        update(Opened);
+        wait();
     }
 }
 
 void Doors::make_closing()
 {
-    switch (m_state)
+    if (m_state == Opening || m_state == Opened)
     {
-        case Opening:
+        if (m_state == Opening)
             write("Таймеры сброшены.");
-            // no break
-        case Opened:
-            cancel_timers();
-            write("Двери закрываются...");
-            update(Closing);
-            schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
+
+        cancel_timers();
+        write("Двери закрываются...");
+        update(Closing);
+
+        schedule_timer(m_closeTimer, DOORS_CLOSE, [this]() {
                 make_closed();
-            });
-            break;
-        case Closing:
-            write("Двери и так уже закрываются.");
-            break;
-        case Closed:
-            write("Двери уже закрыты.");
-            break;
+                });
+    }
+    else if (m_state == Closing)
+    {
+        write("Двери и так уже закрываются.");
+    }
+    else if (m_state == Closed)
+    {
+        write("Двери уже закрыты.");
     }
 }
 
 void Doors::make_closed()
 {
-    switch (m_state)
+    if (m_state == Closing)
     {
-        case Opening:
-        case Opened:
-            break;
-        case Closing:
-            write("Двери закрылись.");
-            update(Closed);
-            break;
-        case Closed:
-            break;
+        write("Двери закрылись.");
+        update(Closed);
     }
 }
 
@@ -185,46 +173,38 @@ void Doors::set_on_opened_callback(Callback callback)
 
 void Doors::wait()
 {
-    switch (m_state)
+    if (m_state == Opened)
     {
-        case Opened:
-            write("Двери ожидают...");
-            schedule_timer(m_waitTimer, DOORS_WAIT, [this]() {
-                    write("Время ожидания вышло.");
-                    make_closing();
-                    /* close(); */
-                    });
-            break;
-
-        default:
-            write("Двери не могут ожидать в текущем состоянии.");
-            break;
+        write("Двери ожидают...");
+        schedule_timer(m_waitTimer, DOORS_WAIT, [this]() {
+                write("Время ожидания вышло.");
+                make_closing();
+                });
     }
 }
 
-
 void Doors::reset_timer(TimerType timer, Callback callback)
 {
-    switch (timer)
+    if (timer == OpenTimer)
     {
-        case OpenTimer:
-            m_openTimer.cancel();
-            schedule_timer(m_openTimer, DOORS_OPEN, [callback]() {
-                    callback();
-                    });
-            break;
-        case CloseTimer:
-            m_closeTimer.cancel();
-            schedule_timer(m_closeTimer, DOORS_CLOSE, [callback]() {
-                    callback();
-                    });
-            break;
-        case WaitTimer:
-            m_waitTimer.cancel();
-            schedule_timer(m_waitTimer, DOORS_WAIT, [callback]() {
-                    callback();
-                    });
-            break;
+        m_openTimer.cancel();
+        schedule_timer(m_openTimer, DOORS_OPEN, [callback]() {
+                callback();
+                });
+    }
+    else if (timer == CloseTimer)
+    {
+        m_closeTimer.cancel();
+        schedule_timer(m_closeTimer, DOORS_CLOSE, [callback]() {
+                callback();
+                });
+    }
+    else if (timer == WaitTimer)
+    {
+        m_waitTimer.cancel();
+        schedule_timer(m_waitTimer, DOORS_WAIT, [callback]() {
+                callback();
+                });
     }
 }
 
@@ -239,16 +219,13 @@ void Doors::update(State state)
 {
     m_state = state;
 
-    switch (state)
+    if (state == Closed)
     {
-        case Closed:
-            emit doors_closed_signal();
-            break;
-        case Opened:
-            emit doors_opened_signal();
-            break;
-        default:
-            break;
+        emit doors_closed_signal();
+    }
+    else if (state == Opened)
+    {
+        emit doors_opened_signal();
     }
 }
 
