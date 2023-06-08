@@ -18,7 +18,7 @@ class Controller
 {
     enum PrevMoveDirection { Down = -1, None = 0, Up = 1 };
 public:
-    enum State { Idling, Updating, Serving };
+    enum State { Idling, Updating, Serving, HandlesCabinMoved, TargetFloorReached };
 
     Controller(boost::asio::io_context &ioContext) : Controller(ioContext, Writer()) {}
     Controller(boost::asio::io_context &ioContext, Writer &&writer) : Controller(ioContext, writer) {}
@@ -36,15 +36,19 @@ private SLOTS:
     void make_idling();
     void make_updating();
     void make_serving();
+    void handle_cabin_moved();
+    void handle_target_floor_reached();
 
 private SIGNALS:
     Signal<> s_should_update;
     Signal<> s_target_updated;
+    Signal<> s_target_reached;
     Signal<> s_no_target;
     Signal<> s_cabin_should_move_up;
     Signal<> s_cabin_should_move_down;
     Signal<> s_cabin_should_be_waiting;
     Signal<> s_cabin_should_be_idling;
+    Signal<> s_cabin_moved_handled;
 
 private:
     void increment_current_floor() { ++m_cur_floor; }

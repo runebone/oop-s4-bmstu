@@ -10,32 +10,17 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
 
     s_should_update.connect([this](){ make_updating(); });
     s_target_updated.connect([this](){ make_serving(); });
+    s_target_reached.connect([this](){ handle_target_floor_reached(); });
     s_no_target.connect([this](){ make_idling(); });
 
-    s_cabin_should_move_up.connect([this](){
-            m_last_direction = Up;
-            m_cabin->make_moving_up();
-            });
-
-    s_cabin_should_move_down.connect([this](){
-            m_last_direction = Down;
-            m_cabin->make_moving_down();
-            });
-
+    s_cabin_should_move_up.connect([this](){ m_cabin->make_moving_up(); });
+    s_cabin_should_move_down.connect([this](){ m_cabin->make_moving_down(); });
     s_cabin_should_be_waiting.connect([this](){ m_cabin->make_waiting(); });
     s_cabin_should_be_idling.connect([this](){ m_cabin->make_idling(); });
 
-    m_cabin->s_moved_up.connect([this](){
-            increment_current_floor();
-            write("Кабина поднялась на этаж " + std::to_string(m_cur_floor) + ".");
-            make_serving();
-            });
-
-    m_cabin->s_moved_down.connect([this](){
-            decrement_current_floor();
-            write("Кабина опустилась на этаж " + std::to_string(m_cur_floor) + ".");
-            make_serving();
-            });
+    m_cabin->s_moved_up.connect([this](){ handle_cabin_moved(); });
+    m_cabin->s_moved_down.connect([this](){ handle_cabin_moved(); });
+    s_cabin_moved_handled.connect([this](){ make_serving(); });
 
     m_cabin->s_idling.connect([this](){ make_updating(); });
 }
@@ -252,23 +237,56 @@ void Controller::make_serving()
     if (target_exist())
     {
         if (m_cur_target > m_cur_floor)
+        {
+            m_last_direction = Up;
             s_cabin_should_move_up.emit();
+        }
         else if (m_cur_target < m_cur_floor)
+        {
+            m_last_direction = Down;
             s_cabin_should_move_down.emit();
+        }
         else
         {
-            deactivate_floor_button(m_cur_floor, ON_FLOOR);
-            deactivate_floor_button(m_cur_floor, IN_CABIN);
-
-            update_target();
-
-            s_cabin_should_be_waiting.emit();
+            s_target_reached.emit();
         }
     }
     else
     {
         s_cabin_should_be_idling.emit();
     }
+}
+
+void Controller::handle_cabin_moved()
+{
+    if (m_last_direction == None) return;
+
+    update_state(HandlesCabinMoved);
+
+    if (m_last_direction == Up)
+    {
+        increment_current_floor();
+        write("Кабина поднялась на этаж " + std::to_string(m_cur_floor) + ".");
+    }
+    else if (m_last_direction == Down)
+    {
+        decrement_current_floor();
+        write("Кабина опустилась на этаж " + std::to_string(m_cur_floor) + ".");
+    }
+
+    s_cabin_moved_handled.emit();
+}
+
+void Controller::handle_target_floor_reached()
+{
+    update_state(TargetFloorReached);
+
+    deactivate_floor_button(m_cur_floor, ON_FLOOR);
+    deactivate_floor_button(m_cur_floor, IN_CABIN);
+
+    update_target();
+
+    s_cabin_should_be_waiting.emit();
 }
 
 void Controller::update_state(State new_state)
@@ -296,6 +314,12 @@ void Controller::print_state()
             break;
         case Serving:
             s = "Обслуживает.";
+            break;
+        case TargetFloorReached:
+            s = "Достигнут целевой этаж.";
+            break;
+        case HandlesCabinMoved:
+            s = "Обрабатывает перемещение кабины.";
             break;
     }
 
