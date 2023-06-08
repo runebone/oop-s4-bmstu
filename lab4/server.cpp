@@ -73,7 +73,7 @@ private:
                         m_controller->print_state();
                         std::cout << Color::Reset << std::endl;
                     }
-                    else if (message == "r" || message == "q")
+                    else if (message == "c")
                     {
                         m_controller->activate_cabin_cancel_button();
                     }
