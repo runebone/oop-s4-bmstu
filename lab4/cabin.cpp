@@ -68,7 +68,7 @@ void Cabin::make_moving_down()
 
 void Cabin::make_idling()
 {
-    if (!m_moveTimer.expired())
+    if (is_moving())
     {
         /* write("Нельзя остановиться между этажами."); */
         return;
@@ -92,7 +92,7 @@ void Cabin::make_idling()
 void Cabin::make_waiting()
 {
     /* if (m_state == MovingUp || m_state == MovingDown) */
-    if (!m_moveTimer.expired())
+    if (is_moving())
     {
         /* write("Нельзя открыть двери в движении."); */
         return;

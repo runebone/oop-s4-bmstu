@@ -20,6 +20,7 @@ public:
     Cabin(boost::asio::io_context &ioContext, Writer &writer);
 
     void print_state();
+    bool is_moving() { return !m_moveTimer.expired(); }
 
 public SLOTS:
     void make_moving_up();
