@@ -11,7 +11,7 @@
 class Doors
 {
 public:
-    enum State { Opened, Opening, Closed, Closing };
+    enum State { Opened, Opening, Waiting, Closed, Closing };
 
     Doors(boost::asio::io_context &ioContext) : Doors(ioContext, Writer()) {}
     Doors(boost::asio::io_context &ioContext, Writer &&writer) : Doors(ioContext, writer) {}
@@ -26,6 +26,7 @@ public SLOTS:
 private SLOTS:
     void make_opened();
     void make_closed();
+    void make_waiting();
 
 public SIGNALS:
     Signal<> s_closed;

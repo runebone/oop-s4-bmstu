@@ -30,10 +30,22 @@ Doors::Doors(boost::asio::io_context &ioContext, Writer &writer)
             s_wait_timer_expired.emit();
             });
 
-    s_opened.connect([this](){
-            m_waitTimer.schedule();
-            write("Ожидают...");
-            });
+    /* s_opened.connect([this](){ */
+    /*         write("Ожидают..."); */
+    /*         m_waitTimer.schedule(); */
+    /*         }); */
+
+    s_opened.connect([this](){ make_waiting(); });
+}
+
+void Doors::make_waiting()
+{
+    if (m_state != Opened) return;
+
+    update_state(Waiting);
+
+    write("Ожидают...");
+    m_waitTimer.schedule();
 }
 
 void Doors::make_opening()
@@ -52,19 +64,23 @@ void Doors::make_opening()
 
     if (m_state == Closed)
     {
+        update_state(Opening);
+
+        write("Открываются...");
         m_openTimer.schedule();
     }
     else if (m_state == Closing)
     {
+        update_state(Opening);
+
         int time_closing = DOORS_CLOSE - m_closeTimer.remaining_time();
 
         m_closeTimer.cancel();
         write("Все события отвязаны от таймера закрытия.");
+
+        write("Открываются...");
         m_openTimer.schedule(time_closing);
     }
-
-    update_state(Opening);
-    write("Открываются...");
 }
 
 void Doors::make_opened()
@@ -95,27 +111,31 @@ void Doors::make_closing()
         return;
     }
 
-    if (m_state == Opened)
+    if (m_state == Opened || m_state == Waiting)
     {
+        update_state(Closing);
+
         if (!m_waitTimer.expired())
         {
             m_waitTimer.cancel();
             write("Все события отвязаны от таймера ожидания.");
         }
 
+        write("Закрываются...");
         m_closeTimer.schedule();
     }
     else if (m_state == Opening)
     {
+        update_state(Closing);
+
         int time_opening = DOORS_OPEN - m_openTimer.remaining_time();
 
         m_openTimer.cancel();
         write("Все события отвязаны от таймера открытия.");
+
+        write("Закрываются...");
         m_closeTimer.schedule(time_opening);
     }
-
-    update_state(Closing);
-    write("Закрываются...");
 }
 
 void Doors::make_closed()
@@ -160,6 +180,9 @@ void Doors::print_state()
             break;
         case Opening:
             s = "Открываются.";
+            break;
+        case Waiting:
+            s = "Ожидают.";
             break;
     }
 
