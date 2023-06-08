@@ -3,7 +3,7 @@
 #include <list>
 #include <regex>
 
-#include "doors.h"
+#include "cabin.h"
 
 namespace Color {
     const std::string Yellow = "\033[33m";
@@ -14,8 +14,8 @@ using boost::asio::ip::tcp;
 
 class ElevatorSession : public std::enable_shared_from_this<ElevatorSession> {
 public:
-    ElevatorSession(tcp::socket socket, std::list<std::shared_ptr<ElevatorSession>>& clients, std::shared_ptr<Doors> doors)
-        : socket_(std::move(socket)), clients_(clients), m_doors(doors) {}
+    ElevatorSession(tcp::socket socket, std::list<std::shared_ptr<ElevatorSession>>& clients, std::shared_ptr<Cabin> cabin)
+        : socket_(std::move(socket)), clients_(clients), m_cabin(cabin) {}
 
     void start()
     {
@@ -59,34 +59,50 @@ private:
                     /* { */
                     /*     button = std::stoi(matches.str(1)); */
 
-                    /*     m_doors->activate_cabin_button(button); */
+                    /*     m_cabin->activate_cabin_button(button); */
                     /* } */
                     /* else if (std::regex_search(message, matches, floor_button_pattern)) */
                     /* { */
                     /*     button = std::stoi(matches.str(1)); */
 
-                    /*     m_doors->activate_floor_button(button); */
+                    /*     m_cabin->activate_floor_button(button); */
                     /* } */
                     if (message == "p")
                     {
                         std::cout << Color::Yellow << std::endl;
-                        m_doors->print_state();
+                        m_cabin->print_state();
                         std::cout << Color::Reset << std::endl;
                     }
-                    /* else if (message == "r" || message == "q") */
-                    /* { */
-                    /*     m_doors->cancel_cabin_buttons(); */
-                    /* } */
-                    else if (message == "c")
+                    else if (message == "u")
                     {
-                        /* m_doors->m_cabin->close_doors(); */
-                        m_doors->make_closing();
+                        m_cabin->make_moving_up();
+                    }
+                    else if (message == "d")
+                    {
+                        m_cabin->make_moving_down();
                     }
                     else if (message == "o")
                     {
-                        /* m_doors->m_cabin->open_doors(); */
-                        m_doors->make_opening();
+                        m_cabin->make_waiting();
                     }
+                    else if (message == "s")
+                    {
+                        m_cabin->make_idling();
+                    }
+                    /* else if (message == "r" || message == "q") */
+                    /* { */
+                    /*     m_cabin->cancel_cabin_buttons(); */
+                    /* } */
+                    /* else if (message == "c") */
+                    /* { */
+                        /* m_cabin->m_cabin->close_cabin(); */
+                        /* m_cabin->make_closing(); */
+                    /* } */
+                    /* else if (message == "o") */
+                    /* { */
+                        /* m_cabin->m_cabin->open_cabin(); */
+                        /* m_cabin->make_opening(); */
+                    /* } */
 
                     /* message += '\n'; */
                     /* broadcast(message); */
@@ -109,7 +125,7 @@ private:
     tcp::socket socket_;
     boost::asio::streambuf inputBuffer_;
     std::list<std::shared_ptr<ElevatorSession>>& clients_;
-    std::shared_ptr<Doors> m_doors;
+    std::shared_ptr<Cabin> m_cabin;
 };
 
 class ElevatorServer {
@@ -117,7 +133,7 @@ public:
     ElevatorServer(boost::asio::io_context& ioContext, short port)
         : acceptor_(ioContext, tcp::endpoint(tcp::v4(), port))
     {
-        m_doors = std::make_shared<Doors>(ioContext);
+        m_cabin = std::make_shared<Cabin>(ioContext);
 
         startAccept();
     }
@@ -132,7 +148,7 @@ private:
                 {
                     std::cout << "New client connected." << std::endl;
 
-                    std::shared_ptr<ElevatorSession> session = std::make_shared<ElevatorSession>(std::move(socket), clients_, m_doors);
+                    std::shared_ptr<ElevatorSession> session = std::make_shared<ElevatorSession>(std::move(socket), clients_, m_cabin);
                     session->start();
                 }
 
@@ -142,7 +158,7 @@ private:
 
     tcp::acceptor acceptor_;
     std::list<std::shared_ptr<ElevatorSession>> clients_;
-    std::shared_ptr<Doors> m_doors;
+    std::shared_ptr<Cabin> m_cabin;
 };
 
 int main()
