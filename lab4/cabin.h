@@ -30,8 +30,10 @@ public SLOTS:
 public SIGNALS:
     Signal<> s_moved_up;
     Signal<> s_moved_down;
-    Signal<> s_stopped;
-    Signal<> s_waiting;
+    Signal<> s_idling;
+
+private SIGNALS:
+    Signal<> s_waiting; // Open doors
 
 private:
     void update_state(State new_state);

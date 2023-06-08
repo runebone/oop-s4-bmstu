@@ -40,13 +40,13 @@ void Doors::make_opening()
 {
     if (m_state == Opening)
     {
-        write("Уже открываются.");
+        /* write("Уже открываются."); */
         return;
     }
 
     if (m_state == Opened)
     {
-        write("Уже открыты.");
+        /* write("Уже открыты."); */
         return;
     }
 
@@ -71,7 +71,7 @@ void Doors::make_opened()
 {
     if (m_state != Opening)
     {
-        write("Ошибка: невозможен переход в состояние <Opened> из этого состояния.");
+        /* write("Ошибка: невозможен переход в состояние <Opened> из этого состояния."); */
         return;
     }
 
@@ -122,7 +122,7 @@ void Doors::make_closed()
 {
     if (m_state != Closing)
     {
-        write("Ошибка: невозможен переход в состояние <Closed> из этого состояния.");
+        /* write("Ошибка: невозможен переход в состояние <Closed> из этого состояния."); */
         return;
     }
 
@@ -139,7 +139,7 @@ void Doors::update_state(State new_state)
 
 void Doors::write(std::string message)
 {
-    message = "Двери : " + message;
+    message = "  Двери   : " + message;
     m_writer.write(message);
 }
 

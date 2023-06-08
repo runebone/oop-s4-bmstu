@@ -24,13 +24,13 @@ void Cabin::make_moving_up()
 {
     if (m_state == Waiting)
     {
-        write("Нельзя начать движение с открытыми дверями.");
+        /* write("Нельзя начать движение с открытыми дверями."); */
         return;
     }
 
     if (m_state == MovingDown)
     {
-        write("Нельзя поменять направление движения во время движения (v).");
+        /* write("Нельзя поменять направление движения во время движения (v)."); */
         return;
     }
 
@@ -47,13 +47,13 @@ void Cabin::make_moving_down()
 {
     if (m_state == Waiting)
     {
-        write("Нельзя начать движение с открытыми дверями.");
+        /* write("Нельзя начать движение с открытыми дверями."); */
         return;
     }
     
     if (m_state == MovingUp)
     {
-        write("Нельзя поменять направление движения во время движения (^).");
+        /* write("Нельзя поменять направление движения во время движения (^)."); */
         return;
     }
 
@@ -70,13 +70,13 @@ void Cabin::make_idling()
 {
     if (!m_moveTimer.expired())
     {
-        write("Нельзя остановиться между этажами.");
+        /* write("Нельзя остановиться между этажами."); */
         return;
     }
     
     if (m_state == Idling)
     {
-        write("Уже остановлена.");
+        /* write("Уже остановлена."); */
         return;
     }
 
@@ -86,20 +86,21 @@ void Cabin::make_idling()
     }
 
     update_state(Idling);
-    s_stopped.emit();
+    s_idling.emit();
 }
 
 void Cabin::make_waiting()
 {
-    if (m_state == MovingUp || m_state == MovingDown)
+    /* if (m_state == MovingUp || m_state == MovingDown) */
+    if (!m_moveTimer.expired())
     {
-        write("Нельзя открыть двери в движении.");
+        /* write("Нельзя открыть двери в движении."); */
         return;
     }
 
     if (m_state == Waiting)
     {
-        write("Уже ожидает.");
+        /* write("Уже ожидает."); */
         return;
     }
 
@@ -116,7 +117,7 @@ void Cabin::update_state(State new_state)
 
 void Cabin::write(std::string message)
 {
-    message = "Кабина: " + message;
+    message = "  Кабина  : " + message;
     m_writer.write(message);
 }
 
