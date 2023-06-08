@@ -33,7 +33,7 @@ public SIGNALS:
     Signal<> s_idling;
 
 private SIGNALS:
-    Signal<> s_waiting; // Open doors
+    Signal<> s_should_be_waiting; // Open doors
 
 private:
     void update_state(State new_state);

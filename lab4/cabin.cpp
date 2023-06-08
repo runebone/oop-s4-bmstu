@@ -17,7 +17,7 @@ Cabin::Cabin(boost::asio::io_context &ioContext, Writer &writer)
             });
 
     m_doors.s_closed.connect([this](){ make_idling(); });
-    s_waiting.connect([this](){ m_doors.make_opening(); });
+    s_should_be_waiting.connect([this](){ m_doors.make_opening(); });
 }
 
 void Cabin::make_moving_up()
@@ -107,7 +107,7 @@ void Cabin::make_waiting()
     update_state(Waiting);
     write("Ожидает...");
 
-    s_waiting.emit();
+    s_should_be_waiting.emit();
 }
 
 void Cabin::update_state(State new_state)
