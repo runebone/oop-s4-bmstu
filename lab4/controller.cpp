@@ -213,6 +213,8 @@ void Controller::update_target()
 
 void Controller::make_idling()
 {
+    if (m_cabin->is_moving()) return;
+
     update_state(Idling);
 
     m_last_direction = None;
