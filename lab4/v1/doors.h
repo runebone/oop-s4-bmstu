@@ -36,9 +36,7 @@ public:
     void print_state();
 
 private:
-    PRIVATE_SLOT void make_opening();
     PRIVATE_SLOT void make_opened();
-    PRIVATE_SLOT void make_closing();
     PRIVATE_SLOT void make_closed();
 
     void set_on_closed_callback(Callback callback);

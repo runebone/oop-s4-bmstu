@@ -23,6 +23,7 @@ public:
 
     PUBLIC_SLOT void move_up();
     PUBLIC_SLOT void move_down();
+
     PUBLIC_SLOT void stop(); // ~= make_idling();
 
     State get_state() { return m_state; }
@@ -32,8 +33,6 @@ public:
 private:
     PRIVATE_SLOT void make_idling() { update(Idling); }
     PRIVATE_SLOT void make_waiting() { update(Waiting); }
-    PRIVATE_SLOT void make_moving_up();
-    PRIVATE_SLOT void make_moving_down();
 
     void set_on_cabin_moved_up_callback(Callback callback);
     void set_on_cabin_moved_down_callback(Callback callback);
