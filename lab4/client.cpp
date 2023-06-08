@@ -25,8 +25,8 @@ public:
                     std::cout << Color::Blue << "c{N}" << Color::Reset << " - Нажать кнопку N этажа в кабине лифта (Пример: c4)" << std::endl;
                     std::cout << Color::Blue << " p  " << Color::Reset << " - Вывести текущее состояние лифта" << std::endl;
                     std::cout << Color::Blue << "q/r " << Color::Reset << " - Нажать на кнопку отмены в лифте" << std::endl;
-                    std::cout << Color::Blue << " o  " << Color::Reset << " - Нажать на кнопку открытия дверей" << std::endl;
-                    std::cout << Color::Blue << " c  " << Color::Reset << " - Нажать на кнопку закрытия дверей" << std::endl;
+                    /* std::cout << Color::Blue << " o  " << Color::Reset << " - Нажать на кнопку открытия дверей" << std::endl; */
+                    /* std::cout << Color::Blue << " c  " << Color::Reset << " - Нажать на кнопку закрытия дверей" << std::endl; */
                     std::cout << std::endl;
 
                     startRead();
