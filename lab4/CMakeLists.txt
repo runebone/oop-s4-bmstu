@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 
 set(COMMON_SRC
     writer.h
+    printer.h
     doors.h doors.cpp
     cabin.h cabin.cpp
     algorithm.h algorithm.cpp
