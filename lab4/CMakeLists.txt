@@ -13,7 +13,9 @@ set(COMMON_SRC
     writer.h
     doors.h doors.cpp
     cabin.h cabin.cpp
+    algorithm.h algorithm.cpp
     controller.h controller.cpp
+    elevator.h elevator.cpp
     signals_and_slots.h
     )
 
