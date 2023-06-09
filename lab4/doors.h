@@ -13,11 +13,33 @@ class Doors
 public:
     enum State { Opened, Opening, Waiting, Closed, Closing };
 
+/* private: */
+    struct Info
+    {
+        State state;
+        int open_time;
+        int close_time;
+        int wait_time;
+    };
+
+/* public: */
     Doors(boost::asio::io_context &ioContext) : Doors(ioContext, Writer()) {}
     Doors(boost::asio::io_context &ioContext, Writer &&writer) : Doors(ioContext, writer) {}
     Doors(boost::asio::io_context &ioContext, Writer &writer);
 
-    void print_state();
+    /* void print_state(); */
+
+    Info get_info() const
+    {
+        Info info;
+
+        info.state = m_state;
+        info.open_time = m_openTimer.remaining_time();
+        info.close_time = m_closeTimer.remaining_time();
+        info.wait_time = m_waitTimer.remaining_time();
+
+        return info;
+    }
 
 public SLOTS:
     void make_opening();
@@ -49,4 +71,6 @@ private:
     AsioTimer m_openTimer;
     AsioTimer m_closeTimer;
     AsioTimer m_waitTimer;
+
+    friend class Cabin;
 };

@@ -163,6 +163,7 @@ void Doors::write(std::string message)
     m_writer.write(message);
 }
 
+#if 0
 void Doors::print_state()
 {
     std::string s;
@@ -197,3 +198,4 @@ void Doors::print_state()
     s = std::to_string(m_waitTimer.remaining_time());
     write("Таймер ожидания: " + s);
 }
+#endif
