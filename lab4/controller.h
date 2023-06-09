@@ -11,6 +11,8 @@
 
 #include "signals_and_slots.h"
 
+#define NUMBER_OF_FLOORS 16
+
 #define IN_CABIN true
 #define ON_FLOOR false
 
@@ -20,11 +22,38 @@ class Controller
 public:
     enum State { Idling, Updating, Serving, HandlesCabinMoved, TargetFloorReached, HandlesButtonClicked };
 
+/* private: */
+    struct Info
+    {
+        State state;
+
+        std::bitset<NUMBER_OF_FLOORS> floor_buttons;
+        std::bitset<NUMBER_OF_FLOORS> cabin_buttons;
+        int current_floor;
+        int target_floor;
+        int last_direction;
+    };
+
+/* public: */
     Controller(boost::asio::io_context &ioContext) : Controller(ioContext, Writer()) {}
     Controller(boost::asio::io_context &ioContext, Writer &&writer) : Controller(ioContext, writer) {}
     Controller(boost::asio::io_context &ioContext, Writer &writer);
 
-    void print_state();
+    /* void print_state(); */
+
+    Info get_info() const
+    {
+        Info info;
+
+        info.state = m_state;
+        info.floor_buttons = m_floor_btns;
+        info.cabin_buttons = m_cabin_btns;
+        info.current_floor = m_cur_floor;
+        info.target_floor = m_cur_target;
+        info.last_direction = m_last_direction;
+
+        return info;
+    }
 
 public SLOTS:
     void handle_button_clicked(int button, bool in_cabin);

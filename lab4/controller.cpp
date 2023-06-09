@@ -1,7 +1,5 @@
 #include "controller.h"
 
-#define NUMBER_OF_FLOORS 16
-
 #include "algorithm.h"
 
 Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
@@ -254,6 +252,7 @@ void Controller::write(std::string message)
     m_writer.write(message);
 }
 
+#if 0
 void Controller::print_state()
 {
     std::string s;
@@ -317,3 +316,4 @@ void Controller::print_state()
 
     m_cabin->print_state();
 }
+#endif
