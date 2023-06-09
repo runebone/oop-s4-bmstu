@@ -70,7 +70,8 @@ private:
                     else if (message == "p")
                     {
                         std::cout << Color::Yellow << std::endl;
-                        m_elevator->print_state();
+                        /* m_elevator->print_state(); */
+                        m_elevator->print();
                         std::cout << Color::Reset << std::endl;
                     }
                     else if (message == "c")
