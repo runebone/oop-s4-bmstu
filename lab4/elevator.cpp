@@ -1,8 +1,10 @@
 #include "elevator.h"
 
 Elevator::Elevator(boost::asio::io_context &ioContext, Writer &writer)
-    : m_context(ioContext),
-    m_writer(writer)
+    : m_context(ioContext), m_writer(writer),
+    m_doors_printer(writer),
+    m_cabin_printer(writer),
+    m_controller_printer(writer)
 {
     m_controller = std::make_shared<Controller>(ioContext, writer);
 
