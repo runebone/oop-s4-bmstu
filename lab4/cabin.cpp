@@ -121,6 +121,7 @@ void Cabin::write(std::string message)
     m_writer.write(message);
 }
 
+#if 0
 void Cabin::print_state()
 {
     std::string s;
@@ -148,3 +149,4 @@ void Cabin::print_state()
 
     m_doors.print_state();
 }
+#endif

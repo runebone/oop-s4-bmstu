@@ -15,11 +15,32 @@ class Cabin
 public:
     enum State { Idling, Waiting, MovingUp, MovingDown };
 
+/* private: */
+    struct Info
+    {
+        State state;
+        int move_time;
+    };
+
+/* public: */
     Cabin(boost::asio::io_context &ioContext) : Cabin(ioContext, Writer()) {}
     Cabin(boost::asio::io_context &ioContext, Writer &&writer) : Cabin(ioContext, writer) {}
     Cabin(boost::asio::io_context &ioContext, Writer &writer);
 
-    void print_state();
+    /* void print_state(); */
+
+    Doors::Info get_doors_info() { return m_doors.get_info(); } const
+
+    Info get_info() const
+    {
+        Info info;
+
+        info.state = m_state;
+        info.move_time = m_moveTimer.remaining_time();
+
+        return info;
+    }
+
     bool is_moving() { return !m_moveTimer.expired(); }
 
 public SLOTS:
