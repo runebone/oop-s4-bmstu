@@ -2,6 +2,8 @@
 
 #define NUMBER_OF_FLOORS 16
 
+#include "algorithm.h"
+
 Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
     : m_context(ioContext),
     m_writer(writer)
@@ -25,15 +27,40 @@ Controller::Controller(boost::asio::io_context &ioContext, Writer &writer)
     m_cabin->s_idling.connect([this](){ make_updating(); });
 }
 
-void Controller::activate_floor_button(int button, bool in_cabin)
+void Controller::handle_button_clicked(int button, bool in_cabin)
 {
+  if (m_state == Updating || m_state == HandlesCabinMoved) return;
+
+  update_state(HandlesButtonClicked);
+
+  bool updated = false;
+
+  if (in_cabin && button == 0)
+  {
+      updated = activate_cabin_cancel_button();
+  }
+  else
+  {
+      updated = activate_floor_button(button, in_cabin);
+  }
+
+  if (updated)
+  {
+      s_should_update.emit();
+  }
+}
+
+bool Controller::activate_floor_button(int button, bool in_cabin)
+{
+    bool updated = false;
+
     std::string s;
 
     if (button < 1 || button > NUMBER_OF_FLOORS)
     {
         s = "Неверный этаж. (Доступно 1 - " + std::to_string(NUMBER_OF_FLOORS) + ")";
         write(s);
-        return;
+        return updated;
     }
 
     if (in_cabin)
@@ -43,6 +70,8 @@ void Controller::activate_floor_button(int button, bool in_cabin)
 
     s = "Кнопка " + std::to_string(button) + " этажа активирована.";
 
+    updated = true;
+
     if (in_cabin)
         s += " (в кабине)";
     else
@@ -50,11 +79,13 @@ void Controller::activate_floor_button(int button, bool in_cabin)
 
     write(s);
 
-    s_should_update.emit();
+    return updated;
 }
 
-void Controller::activate_cabin_cancel_button()
+bool Controller::activate_cabin_cancel_button()
 {
+    bool updated = false;
+
     if (!m_cabin_btns)
     {
         write("Никакие кнопки не нажаты.");
@@ -63,8 +94,10 @@ void Controller::activate_cabin_cancel_button()
     {
         m_cabin_btns = 0;
         write("Кнопки кабины сброшены.");
-        s_should_update.emit();
+        updated = true;
     }
+
+    return updated;
 }
 
 void Controller::deactivate_floor_button(int button, bool in_cabin)
@@ -99,87 +132,6 @@ void Controller::deactivate_floor_button(int button, bool in_cabin)
             write(s);
         }
     }
-}
-
-static int calculate_next_target_floor(int current_floor, int floor_btns_bin, int cabin_btns_bin, bool is_moving, bool up)
-{
-    int next_floor = 0;
-    int next_floor_up = 0;
-    int next_floor_down = 0;
-
-    for (int floor = current_floor + 1; 1 <= floor && floor <= NUMBER_OF_FLOORS; floor += 1) {
-        if (floor_btns_bin & (1 << (floor - 1)) || cabin_btns_bin & (1 << (floor - 1))) {
-            next_floor_up = floor;
-            break;
-        }
-    }
-
-    for (int floor = current_floor - 1; 1 <= floor && floor <= NUMBER_OF_FLOORS; floor -= 1) {
-        if (floor_btns_bin & (1 << (floor - 1)) || cabin_btns_bin & (1 << (floor - 1))) {
-            next_floor_down = floor;
-            break;
-        }
-    }
-
-    // Take next floor on the way up/down if the elevator is moving
-    if (is_moving)
-    {
-        if (up)
-        {
-            if (next_floor_up)
-            {
-                next_floor = next_floor_up;
-            }
-            // Cabin is moving up, but there are no floors above activated
-            else
-            {
-                next_floor = next_floor_down;
-            }
-        }
-        else
-        {
-            if (next_floor_down)
-            {
-                next_floor = next_floor_down;
-            }
-            else
-            {
-                next_floor = next_floor_up;
-            }
-        }
-        /* next_floor = up ? next_floor_up : next_floor_down; */
-    }
-    // If elevator is idling/waiting, take the nearest floor
-    else
-    {
-        if (next_floor_up && next_floor_down)
-        {
-            int cond = (next_floor_up - current_floor) < (current_floor - next_floor_down);
-
-            next_floor = cond ? next_floor_up : next_floor_down;
-        }
-        else if (next_floor_up)
-        {
-            next_floor = next_floor_up;
-        }
-        else if (next_floor_down)
-        {
-            next_floor = next_floor_down;
-        }
-        else
-        {
-            if (floor_btns_bin & (1 << (current_floor - 1)) || cabin_btns_bin & (1 << (current_floor - 1)))
-            {
-                next_floor = current_floor;
-            }
-            else
-            {
-                next_floor = 0;
-            }
-        }
-    }
-
-    return next_floor;
 }
 
 void Controller::update_target()
@@ -322,6 +274,9 @@ void Controller::print_state()
             break;
         case HandlesCabinMoved:
             s = "Обрабатывает перемещение кабины.";
+            break;
+        case HandlesButtonClicked:
+            s = "Обрабатывает нажатие кнопки.";
             break;
     }
 

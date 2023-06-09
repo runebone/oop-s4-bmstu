@@ -18,7 +18,7 @@ class Controller
 {
     enum PrevMoveDirection { Down = -1, None = 0, Up = 1 };
 public:
-    enum State { Idling, Updating, Serving, HandlesCabinMoved, TargetFloorReached };
+    enum State { Idling, Updating, Serving, HandlesCabinMoved, TargetFloorReached, HandlesButtonClicked };
 
     Controller(boost::asio::io_context &ioContext) : Controller(ioContext, Writer()) {}
     Controller(boost::asio::io_context &ioContext, Writer &&writer) : Controller(ioContext, writer) {}
@@ -26,11 +26,8 @@ public:
 
     void print_state();
 
-    void activate_floor_button(int button, bool in_cabin);
-    void activate_cabin_cancel_button();
-
-private:
-    void deactivate_floor_button(int button, bool in_cabin);
+public SLOTS:
+    void handle_button_clicked(int button, bool in_cabin);
 
 private SLOTS:
     void make_idling();
@@ -51,6 +48,10 @@ private SIGNALS:
     Signal<> s_cabin_moved_handled;
 
 private:
+    bool activate_floor_button(int button, bool in_cabin);
+    bool activate_cabin_cancel_button();
+    void deactivate_floor_button(int button, bool in_cabin);
+
     void increment_current_floor() { ++m_cur_floor; }
     void decrement_current_floor() { --m_cur_floor; }
 
