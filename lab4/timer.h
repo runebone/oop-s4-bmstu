@@ -34,7 +34,7 @@ public:
         m_timer.cancel();
     }
 
-    int remaining_time()
+    int remaining_time() const
     {
         boost::asio::steady_timer::duration remainingTime = m_timer.expires_from_now();
         std::chrono::milliseconds remainingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(remainingTime);
@@ -43,7 +43,7 @@ public:
         return milliseconds > 0 ? milliseconds : 0;
     }
 
-    bool expired()
+    bool expired() const
     {
         return remaining_time() == 0;
     }
